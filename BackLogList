@@ -1,0 +1,8 @@
+
+In order of Priority:
+
+
+-Add Wifi (ESP8266) to the product design 
+  *Add server to/from the arduino will be sending request 
+  *Incorporate a DB
+  *User Interface
