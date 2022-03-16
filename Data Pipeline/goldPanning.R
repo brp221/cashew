@@ -14,17 +14,13 @@ library(dplyr)
 require(httr)
 
 #GLOBAL VARS
-api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'
-#fmp_api_key(api_key, overwrite = TRUE)
-#readRenviron('~/.Renviron') 
+api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'   
+fmp_api_key(api_key, overwrite = TRUE)   
+readRenviron('~/.Renviron') 
 headers = c(`Upgrade-Insecure-Requests` = '1')
 params = list(`datatype` = 'json')
+url = 'https://financialmodelingprep.com/api/v4/earnings-calendar-confirmed-api?from=2022-03-10&to=2022-05-01'
 
-#MAKES AN FMP API REQUEST AND PARŠES THEIR RESPONSE
-makeReqParseRes <- function(url){
-  res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
-  content(res)
-}
 
 allStocksUrl <- paste('https://financialmodelingprep.com//api/v3/stock-screener?isEtf=false&apikey=',api_key, sep = "")
 allStocks <- dplyr::bind_rows(makeReqParseRes(allStocksUrl))
@@ -46,7 +42,16 @@ smallCap <- allStocks %>% filter(marketCap >=300000000 & marketCap <2000000000)
 microCap <- allStocks %>% filter(marketCap <300000000 )
 
 
-#SIFTS THROUGH THE STOCKS AND PICKS OUT GOLD 
+#MAKES AN FMP API REQUEST AND PARŠES THEIR RESPONSE
+makeReqParseRes <- function(url){
+  res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
+  content(res)
+}
+
+
+
+
+#SIFT THROUGH STOCKS, PICK OUT GOLD 
 stockSifter <- function(selectedStocks){
   #PREPARE THE OUTPUT DF 
   stockMetaData <- data.frame(matrix(ncol = 12, nrow = 0))
@@ -126,7 +131,7 @@ stockSifter <- function(selectedStocks){
   stockMetaData
 } 
 
-#PICK OUT NUGGETS OF GOLD IN ORDER OF IMPORTANCE AND SIGNIFICANCE 
+#SORT/PICK NUGGETS OF GOLD FROM BEST OT WORST 
 stockPicker <- function(selectedStocks){
   #Order stocks in descending order (overall rating, piotroski score, PriceMinusGraham)
   stockMetaDataOrdered <- stockMetaData[order(stockMetaData$OverallRating,stockMetaData$piotroskiScore, stockMetaData$PriceMinusGraham, decreasing = c(T,T, T)),]
@@ -135,44 +140,52 @@ stockPicker <- function(selectedStocks){
   stockMetaDataOrdered <- stockMetaDataOrdered %>% filter(probBankruptcy == "safe" | altmanZScore >= 2)
 }
 
-largeCapSifted <- stockSifter(largeCap)
-largeCapOrdered<- stockPicker(largeCapSifted)
-
-
-largeCapOrdered <- stockPicker(largeCapSifted)
-
-megaCapSifted <- stockSifter(megaCap)
-
-
-
 #FILTER FUNCTIONS
-
 # filter by risk of bankruptcy ( altmanZScore )
 filterByRisk <-function(df, higherThan, lessThan=1000){
   res_df <- df %>% filter(altmanZScore >=higherThan & altmanZScore <=lessThan )
-  res_df
+  return(res_df)
 }
 
 #filter by the value of price ( graham Number)
 filterByValue <- function(df, priceDiffLower, priceDiffHigher=max()){
   res_df <- df %>% filter(PriceMinusGraham>=priceDiffLower & PriceMinusGraham <= priceDiffHigher)
-  res_df
+  return(res_df)
 }
 
 #filter by overall company health ( piotroskiScore)
 filterByPiotroski <- function(df, scoreLow, scoreHigh = NULL ){
   if(is.null(scoreHigh)){
-    scoreHigh = min(as.numeric(df$PriceMinusGraham), na.rm=TRUE)
+    #scoreHigh = min(as.numeric(df$piotroskiScore), na.rm=TRUE)
+    res_df <- df %>% filter(piotroskiScore>=scoreLow & piotroskiScore <= scoreHigh)
+    return(res_df)
   }
-  res_df <- df %>% filter(PriceMinusGraham>=priceDiffLower & PriceMinusGraham <= priceDiffHigher)
-  res_df
+  res_df <- df %>% filter(piotroskiScore>=scoreLow )
+  return(res_df)
 }
 
-#filter by future growth 
+#filter by releasedEarnings
+filterByCalendar<-function(date1, date2){
+  url = paste('https://financialmodelingprep.com/api/v4/earnings-calendar-confirmed-api?from=', date1,'&to=', date2, sep = "")
+  #&apikey=ce687b3fe0554890e65d6a5e48f601f9
+  #earnings_calendar <- makeReqParseRes(url)
+  print(url)
+  #earnings_calendar
+}
+#TO BE TESTED
+calendarURL <- paste('https://financialmodelingprep.com/api/v4/earnings-calendar-confirmed-api?from=2021-03-10&to=2022-10-01&apikey=',api_key, sep = "")
+earnCal <- makeReqParseRes(calendarURL)
+
+earnings_calendar_2 <- filterByCalendar('2022-03-10', '2022-03-29')
 
 
 #LOOK TO THE FUTURE FIND NEW GOLD FIELDS
 #earningsCalendar
 
+
+largeCapSifted <- stockSifter(largeCap)
+largeCapOrdered<- stockPicker(largeCapSifted)
+
+megaCapSifted <- stockSifter(megaCap)
 
 
