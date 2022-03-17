@@ -5,12 +5,21 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(fmsb)#Spider Graph 
+library(reshape2)#melt
+require(httr)
 
 
 api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'
 #fmp_api_key(api_key, overwrite = TRUE)
 #readRenviron('~/.Renviron') 
 
+#MAKES AN FMP API REQUEST AND PARŠES THEIR RESPONSE
+makeReqParseRes <- function(url){
+  res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
+  content(res)
+}
+
+#MAKES A RADAR CHART 
 radarChart <- function(dataframe, symbol, competitorSymbol){
   colnames(dataframe) <- c("DiscountedCashFlow" , "ReturnOnInvestment" , "ReturnOnAssests" , "Debt2Equity" , "Price2Eearnings", "Price2Book" )
   rownames(dataframe) <- c(symbol, competitorSymbol)
@@ -33,6 +42,44 @@ radarChart <- function(dataframe, symbol, competitorSymbol){
   # Add a legend
   legend(x=1, y=1, legend = rownames(dataframe[-c(1,2),]), bty = "n", pch=20 , col=colors_in , text.col = "grey", cex=1.2, pt.cex=3)
 }
+
+#CREATES FINANCIAL PPER COMPARISON DF FOR THE RADAR CHART
+financialsPeerComparsion <- function(compOutlookRating, symbol){
+  #Get Peers 
+  url = paste('https://financialmodelingprep.com/api/v4/stock_peers?symbol=',symbol,'&apikey=',api_key,sep="")
+  peers <- makeReqParseRes(url)
+  DCF <- c()
+  ROE <- c()
+  ROA <- c()
+  DE  <- c()
+  PE  <- c()
+  PB  <- c()
+  index = 1
+  for (i in 1:length(peers[[1]]$peersList)) {
+    peerCompOutlook <- fmp_company_outlook(peers[[1]]$peersList[i][[1]])
+    if(length(peerCompOutlook)==0 ){next}
+    if(length(peerCompOutlook[[1]]$rating)==0 ){next}
+    DCF[index] = peerCompOutlook[[1]]$rating$ratingDetailsDCFScore
+    ROE[index] = peerCompOutlook[[1]]$rating$ratingDetailsROEScore
+    ROA[index] = peerCompOutlook[[1]]$rating$ratingDetailsROAScore
+    DE[index] = peerCompOutlook[[1]]$rating$ratingDetailsDEScore
+    PE[index] = peerCompOutlook[[1]]$rating$ratingDetailsPEScore
+    PB[index] = peerCompOutlook[[1]]$rating$ratingDetailsPBScore
+    index=index+1
+  }
+  finComparsionDf <- data.frame(
+             "DCF"=c(compOutlookRating$ratingDetailsDCFScore, mean(DCF)),
+             "ROE"=c(compOutlookRating$ratingDetailsROEScore, mean(ROE)),
+             "ROA"=c(compOutlookRating$ratingDetailsROAScore, mean(ROA)),
+             "DE"=c(compOutlookRating$ratingDetailsDEScore, mean(DE)),
+             "PE"=c(compOutlookRating$ratingDetailsPEScore,mean(PE)),
+             "PB"=c(compOutlookRating$ratingDetailsPBScore,mean(PB)))
+  return(finComparsionDf)
+}
+
+babaOutlook <- fmp_company_outlook("BABA")
+peerComparsion <- financialsPeerComparsion(babaOutlook[[1]]$rating, "BABA")
+radarChart(peerComparsion, "BABA", "PEER GROUP")
 
 NASDAQ_data <- fmp_screen_stocks(exchange = "NASDAQ")
 NYSE_data <- fmp_screen_stocks(exchange = "NYSE",)
@@ -72,13 +119,13 @@ body <- dashboardBody(
       tabPanel("FINANCIALS", 
         fluidRow(
          valueBox("Ratios", subtitle = "important copmany scores", color="blue"),
-         valueBox("Production", subtitle = "earnings,free cash flow and debt repayment", color="teal"),
+         valueBox("Production", subtitle = "earnings,free cash flow and debt repayment", color="light-blue"),#navy
          valueBox("Price", subtitle = "Price Over Time ", color="olive")
         ),
         fluidRow(
            box(
               selectizeInput('symbol', 'symbol', choices = c("choose" = "", unique(all_stocks$symbol)),selected=randomPopSymbol ),
-              textInput("symbolText", label = h3("Stock symbol goes here..."), value = ""),
+              textInput("symbolText", label = h3("Stock symbol goes here..."), value = randomPopSymbol),
               actionButton("fireAction", "Lookup"),
               div(DT::DTOutput("financialTable"), style = "font-size: 70%;"), width = 4
            ),
@@ -159,13 +206,13 @@ server = function(input, output, session) {
   })
   
 
-  observeEvent(input$symbol,{
-    dynamicVals$companyOutlook <- fmp_company_outlook(input$symbol)
-    dynamicVals$selectedSymbol <- input$symbol
-    dynamicVals$keyMetrics <- fmp_key_metrics(input$symbol)
-    dynamicVals$scores <- httr::GET(url = paste('https://financialmodelingprep.com/api/v4/score?symbol=',input$symbol,'&apikey=',api_key, sep = ""), 
-                                   httr::add_headers(.headers=headers), query = params)
-  })
+  #observeEvent(input$symbol,{
+   # dynamicVals$companyOutlook <- fmp_company_outlook(input$symbol)
+   # dynamicVals$selectedSymbol <- input$symbol
+   # dynamicVals$keyMetrics <- fmp_key_metrics(input$symbol)
+   # dynamicVals$scores <- httr::GET(url = paste('https://financialmodelingprep.com/api/v4/score?symbol=',input$symbol,'&apikey=',api_key, sep = ""), 
+   #                                httr::add_headers(.headers=headers), query = params)
+  #})
   
   # fetch Scores. Eventually refactor whole application to use this style rather than 3rd party library 
   getScores <-reactive({
@@ -195,16 +242,20 @@ server = function(input, output, session) {
   
   #generate radarChart of the Ratings
   radarChartData <- reactive({
-    radarData <- data.frame("DCF"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsDCFScore, 3),
-                            "ROE"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsROEScore, 3),
-                            "ROA"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsROAScore, 3),
-                            "DE"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsDEScore, 3),
-                            "PE"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsPEScore,3),
-                            "PB"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsPBScore,3))
+    print(dynamicVals$companyOutlook[[1]]$rating)
+    print(input$symbolText)
+    data <- financialsPeerComparsion(dynamicVals$companyOutlook[[1]]$rating, input$symbolText)
+    #radarData <- data.frame("DCF"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsDCFScore, 3),
+     #                       "ROE"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsROEScore, 3),
+      #                      "ROA"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsROAScore, 3),
+      #                      "DE"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsDEScore, 3),
+       #                     "PE"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsPEScore,3),
+     #                       "PB"=c(dynamicVals$companyOutlook[[1]]$rating$ratingDetailsPBScore,3))
+    print(data)
   })
   output$radarChart <- renderPlot(
     print(
-      radarChart(radarChartData(),dynamicVals$selectedSymbol, "Competitor" )
+      radarChart(radarChartData(),dynamicVals$selectedSymbol, "PEERS" )
     )
   )
   
@@ -220,11 +271,13 @@ server = function(input, output, session) {
   # fetch selected stock based on the range provided
   priceData <- reactive({
     priceRange<- fmp_prices(dynamicVals$selectedSymbol, interval = input$priceInterval)
+    priceRange<-priceRange[,1:5]
+    priceRangeMelt <- melt(priceRange ,  id.vars = 'date', variable.name = 'series')
   })
   # line graph of the chart 
   output$priceChart <- renderPlot(
     print(
-        ggplot(data=priceData(), aes(x=date, y=close, group=1)) + geom_line()+geom_point())
+        ggplot(data=priceData(), aes(x=date, y=value, group=1)) + geom_line()+geom_point()) #col=series
   )
   
   # produce data for the bar chart
