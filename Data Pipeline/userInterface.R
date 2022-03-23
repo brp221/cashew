@@ -8,11 +8,6 @@ library(fmsb)#Spider Graph
 library(reshape2)#melt
 require(httr)
 
-
-api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'
-#fmp_api_key(api_key, overwrite = TRUE)
-#readRenviron('~/.Renviron') 
-
 #MAKES AN FMP API REQUEST AND PARŠES THEIR RESPONSE
 makeReqParseRes <- function(url){
   res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
@@ -77,22 +72,17 @@ financialsPeerComparsion <- function(compOutlookRating, symbol){
   return(finComparsionDf)
 }
 
-babaOutlook <- fmp_company_outlook("BABA")
-peerComparsion <- financialsPeerComparsion(babaOutlook[[1]]$rating, "BABA")
-radarChart(peerComparsion, "BABA", "PEER GROUP")
-
-NASDAQ_data <- fmp_screen_stocks(exchange = "NASDAQ")
-NYSE_data <- fmp_screen_stocks(exchange = "NYSE",)
-
-all_data <- rbind(NASDAQ_data, NYSE_data)
-all_stocks<-all_data[all_data$is_etf==F,]
-
+#GLOBALS
+api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'
+fmp_api_key(api_key, overwrite = TRUE)
+readRenviron('~/.Renviron') 
+headers = c(`Upgrade-Insecure-Requests` = '1')
+params = list(`datatype` = 'json')
+allStocksUrl <- paste('https://financialmodelingprep.com//api/v3/stock-screener?isEtf=false&apikey=',api_key, sep = "")
+stockDF <- dplyr::bind_rows(makeReqParseRes(allStocksUrl))
 randomPopSymbol <- "TSLA"
-#Important to display on the stock screener page 
-earningsCalendar<- fmp_earnings_calendar() #filter to exclude BS
-
-# Important to display in a corner in a proper intuitive fashion 
-sectPerformance<-fmp_sector_performance()
+earningsCalendar<- fmp_earnings_calendar() #Important to display on the stock screener page filter to exclude BS
+sectPerformance<-fmp_sector_performance() # Dique about this line  
 
 body <- dashboardBody(
   mainPanel(
@@ -106,7 +96,8 @@ body <- dashboardBody(
         fluidRow(
           box(title = "FILTER",solidHeader = T,
               width = 4,collapsible = T,
-              selectizeInput('sectors', 'SECTOR', choices = c("choose" = "", unique(sectPerformance$sector)),selected= "Technology"),
+              selectizeInput('sectors', 'SECTOR', choices = c("choose" = "", c("ALL", unique(sectPerformance$sector))),selected= "ALL"),
+              selectizeInput('industry', 'INDUSTRY', choices = c("choose" = "", c("ALL", unique(stockDF$industry))),selected= "ALL"),
               sliderInput(inputId="market_cap", label="Market Cap", min=1e7, max=3e+12,value=c(1e7,2.762836e+12)),
           ),
           box(title = "STOCKS", solidHeader = T,
@@ -124,7 +115,7 @@ body <- dashboardBody(
         ),
         fluidRow(
            box(
-              selectizeInput('symbol', 'symbol', choices = c("choose" = "", unique(all_stocks$symbol)),selected=randomPopSymbol ),
+              selectizeInput('symbol', 'symbol', choices = c("choose" = "", unique(stockDF$symbol)),selected=randomPopSymbol ),
               textInput("symbolText", label = h3("Stock symbol goes here..."), value = randomPopSymbol),
               actionButton("fireAction", "Lookup"),
               div(DT::DTOutput("financialTable"), style = "font-size: 70%;"), width = 4
@@ -179,8 +170,8 @@ ui = dashboardPage(
 )
 server = function(input, output, session) {
 
-  all_stocks <- fmp_screen_stocks()
-  all_stocks <- all_stocks[all_stocks$is_etf == FALSE,]
+  stockDF <- fmp_screen_stocks()
+  stockDF <- stockDF[stockDF$is_etf == FALSE,]
   headers = c(
     `Upgrade-Insecure-Requests` = '1'
   )
@@ -320,11 +311,19 @@ server = function(input, output, session) {
   
   # filter data for the stock screener
   filterData <- reactive({
-    #dynamically filter data
-    all_stocks <-subset(all_stocks, all_stocks$sector == input$sectors & all_stocks$market_cap > input$market_cap[1] & all_stocks$market_cap < input$market_cap[2]
-                      ,select = c("symbol", "company_name", "price", "sector","market_cap"))
-    #join with rating maybe ?
+    #filter by sector
+    if(input$sectors!="ALL"){
+      stockDF <-subset(stockDF, stockDF$sector == input$sectors ,select = c("symbol", "company_name", "price", "sector","market_cap"))
+    }
+    #filter by industry
+    if(input$industry!="ALL"){
+      stockDF <-subset(stockDF, stockDF$industry == input$industry ,select = c("symbol", "company_name", "price", "sector","market_cap"))
+    }
+    
+    stockDF <-subset(stockDF, stockDF$market_cap > input$market_cap[1] & stockDF$market_cap < input$market_cap[2]
+                     ,select = c("symbol", "company_name", "price", "sector","market_cap"))
     })
+  
   # return the filtered stock screener
   output$stockTable <- DT::renderDataTable({
     DT::datatable(filterData(),selection="single",rownames = F)
