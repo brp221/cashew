@@ -213,12 +213,37 @@ ggplot(allStocksFilteredSiftedCopy, aes(DCFMinusPrice, GrahamMinusPrice)) + #,  
   theme_bw()
 
 
-# NEED MORE ANALYSIS HERE, SEEMS LIKE IT IS TRUE WITH NUMBERS WHICH ARE AWAY FROM ZERO 
+# NEED MORE ANALYSIS HERE, SEEMS LIKE IT IS TRUE WITH NUMBERS WHICH ARE CERTAIN AMOUNT AWAY FROM ZERO 
+# GRAHAM NUMBER DEFINATELY NEEDS TO BE NORMALIZED THOUGH ACROSS MARKET
 #--------------------------------------------------------------------------------------------------------------------
 
 # PERHAPS ADD INSIDER TRADING 
+# Analyst Rating Distribution ( OverallRating grouping)
+insideTradingDFCOPY <-insideTradingDF
+insideTradingDFCOPY$InsiderPurchased <- as.numeric(insideTradingDFCOPY$InsiderPurchased)
+res <-quantile(insideTradingDFCOPY$InsiderPurchased, probs = c(.03, .97), na.rm=T)
+insideTradingDFCOPY <- insideTradingDFCOPY %>% filter(InsiderPurchased > res[[1]] & InsiderPurchased < res[[2]])
 
+insideTradingDFCOPY %>% ggplot( aes(x=InsiderPurchased))+
+  geom_histogram(fill="#69b3a2", color="#e9ecef", alpha=0.6, position = 'identity') +
+  ggtitle("Distribution of InsiderPurchased SUM") +
+  scale_fill_manual(values=c("#69b3a2", "#404080", '#714C02')) +
+  theme_ipsum() +
+  labs(fill="")+
+  theme(
+    plot.title = element_text(size=15)
+  )
 
+# BoxplotDistributions
+ggplot(insideTradingDFCOPY, aes(x=TransactionCountBand, y=InsiderPurchased)) + 
+  geom_boxplot(outlier.colour="red", outlier.shape=1,
+               outlier.size=4) +
+  ggtitle("Distribution of DCF Minus Price by Probablity of Bankruptcy") 
 
+# TO BE USED FOR NORMALIZING ACROSS MARKET (PERHAPS INSUDSTRY TOO)
+# ALTERNATIVE TO SUM MIGHT BE MEAN BECAUSE more transactions skew data. 
+
+#--------------------------------------------------------------------------------------------------------------------
+# INSIDER TRADING AND DCFMINUSPRICE CORRELATION 
 
 
