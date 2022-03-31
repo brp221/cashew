@@ -10,7 +10,7 @@ api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'
 fmp_api_key(api_key, overwrite = TRUE)   
 readRenviron('~/.Renviron') 
 
-# FUNCTION TO FETCH AND AGGREGATE INSIDER TRADING
+# FETCHES AND AGGREGATES INSIDER TRADING
 fetchInsiderTrading <-function(inputDF){
   resultDF <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(resultDF) <- c('Symbol', 'InsiderPurchased', 'TransactionCount')
@@ -61,13 +61,7 @@ fetchInsiderTrading <-function(inputDF){
   resultDF
 }
 
-outputDf <- subset(allStocksFilteredSifted,
-             !is.na(allStocksFilteredSifted$AnalystRating) & allStocksFilteredSifted$AnalystResponses>5,
-             select = c("Symbol", "DCFMinusPrice"))
-
-resultDF <- fetchInsiderTrading(outputDf) # adds Insider Trading 
-
-
+# FETCHES GRAHAM NUMBER, YEAR HIGH AND LOW, COMPUTES grahamMinusPrice
 fetchGrahamNumber<- function(inputDF){
   returnDF <- data.frame(Symbol=character(0),
                          price=numeric(0),
@@ -94,21 +88,36 @@ fetchGrahamNumber<- function(inputDF){
                       companyOutlook[[1]]$metrics$yearHigh[[1]],
                       as.character(companyOutlook[[1]]$metrics$yearLow[[1]]),
                       as.double(grahamMinuesPrice)
-                      )
+    )
     
   }
   #returnDF$grahamMinuesPrice <- as.numeric(returnDF$grahamNumber) - as.numeric(returnDF$price)
   returnDF
-  }
+}
+
+
+outputDf <- subset(allStocksFilteredSifted,
+             !is.na(allStocksFilteredSifted$AnalystRating) & allStocksFilteredSifted$AnalystResponses>5,
+             select = c("Symbol", "DCFMinusPrice"))
+
+resultDF <- fetchInsiderTrading(outputDf) # adds Insider Trading 
+
 
 resultDFgraham <- fetchGrahamNumber(outputDf)
 
 totalDF <- merge(resultDFgraham,resultDF,by=c("Symbol"), all.x=TRUE)
 
+totalDF$price<-as.numeric(totalDF$price)
+totalDF$yearHigh<-as.numeric(totalDF$yearHigh)
+totalDF$yearLow<-as.numeric(totalDF$yearLow)
+totalDF$grahamNumber<-as.numeric(totalDF$grahamNumber)
+totalDF$grahamMinusPrice<-as.numeric(totalDF$grahamMinusPrice)
 
 # INSIDER TRADING DERIVES MARKET SENTIMENT 
 # Brooks ratio, which divides total insider sales of a company by total insider trades (purchases and sales) and then averages this ratio for thousands of stocks. 
 # If the average Brooks ratio is less than 40%, the market outlook is bullish; above 60% signals a bearish outlook.
 
+#Market Adjusted graham
+mean(totalDF$grahamMinusPrice, na.rm = T) # can't be this though because the difference depends on the price, larger price means more difference
 
 

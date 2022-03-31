@@ -14,3 +14,9 @@
 # Profitability (ROA, ROE )
   # Net Profit :  evaluating profitability is net margin, the ratio of net profits to total revenues
   # 
+
+
+finMetrics<- fmpc_financial_metrics("AAPL", quarterly = F)
+
+#DEBT
+finStatements<-fmp_cash_flow("AAPL")
