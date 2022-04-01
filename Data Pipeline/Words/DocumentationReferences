@@ -1,6 +1,8 @@
 
 
 (1) FMP R API : https://jpiburn.github.io/fmpapi/
+                https://exploringfinance.github.io/fmpcloudr/
+                
 
 (2) R Shiny Icons : https://fontawesome.com/v4/icons/
                     https://fontawesome.com/search?q=telescope
@@ -17,7 +19,9 @@
 (7) Supplementary API :
               (a)https://www.macroaxis.com/invest/advice/C
               
-(8) DCF: https://github.com/halessi/DCF
+(8) DCF: 
+        - https://github.com/halessi/DCF
+        - https://site.financialmodelingprep.com/discounted-cash-flow
 
 (9) Insider Trades and Instrinsic Value https://www.investopedia.com/articles/02/121002.asp
 
@@ -25,5 +29,6 @@
       - Market Profile Theorems Inc. :https://www.mptonline.com/index.php?option=com_content&view=category&layout=blog&id=28&Itemid=39
       - Market Indicators : https://www.investopedia.com/terms/m/market_indicators.asp
       - Wall Street https://github.com/SimplyWallSt/Company-Analysis-Model/blob/master/MODEL.markdown#value
+      - TECHNICAL INDICATORS : https://exploringfinance.github.io/fmpcloudr/#technical-indicators
       
 (11)

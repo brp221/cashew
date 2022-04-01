@@ -1,0 +1,52 @@
+ 
+ 
+ MEETING AGENDA 
+ 
+ 
+ (1) GENERAL PITCH 
+      - motivation : 
+            - uncle in Savannah
+            - not many investment products for the middle class. Most are for wealth managment firms. Blackrock's Alladin, Bloomberg                          
+              Terminal, Koyfin. I dont care about making the rich any richer than they already are. 
+      - Talk about current "investment" products: Yahoo Fin, Alpha,Koyfin, Wall Street (expensive)
+            - great research tools. Wealth/ Pollution of Data( Knowledge). Depends on your perspective and who you are
+            - subscriptions aren't appealing YF: 25$, SeekingAlpha: 20$, SimplyWallStreet $20/month . That is a high tax, even if the investor                
+              is gaining $200 montly. Not to mention the cost of time and effort spent in the meantime 
+            - UGLY IMPRACTICAL UIs
+      - what we will provide that is DIFFERENT:
+            1. Other platforms put it on the user to do their research. We "sift the gold" already
+                  -introduce goldPanner.R
+                  -minimaslistic ( "There's beauty in simplicity") ( "QUALITY OVER QUANTITY" )
+            2. Many Different Approaches to Investing
+                  -Discount Investing (Intrinsic Value) 
+                  -Biggest Growth Investing
+                  -Best Overall Financial Health Investing
+                  -Earning Calendar +  Other Types of Sentiment investing 
+                  -Technical Investing Support ( for more intensive investors )
+            3. Focused on the needs of the average joe. 
+                  -Our platform will save time for the middle class working 9-5s 
+                  -Most people are scared of what they dont know. We present content in an approachable, friendly manner
+                  -Educative Tool
+            4. Price Moat 
+                  - Ideally,depending on cost of production, our services would be in the price range of a Starbucks Latte
+             
+ (2) FMP API 
+      - Show data available to us : ? SHINY DASHBOARD ?
+      - would you guys like to take a look at the FMP Documentation ? 
+      - Show what we would be able to do with it :
+          - Present USER INTERFACE draft which will act as an investment reccomender/ assistant 
+          - Create an actual automated trading bot ( Tech analysis w FMPC API) : https://exploringfinance.github.io/fmpcloudr/#technical-indicators
+          - Physical products (something like apple-watch-esque : visual/auditory appeal?) (arduino prototype)
+ 
+ (3) SHOW WHAT I HAVE DONE ALREADY 
+      - The 4 Automated Notebooks 
+      - Shiny Dashbaord 
+      - UI Draft 
+      
+ 
+ (4) WORK TO BE DONE 
+      1.Reasearch 
+      1.UI execution 
+      2.DB Integration. Added benefit of this is that by recording data we rely less on the FMP. Plus we get to keep historical data 
+      3.(Marketing + website traffic) dont need to think about this for a while) ( focus on the product we are creating)
+ 

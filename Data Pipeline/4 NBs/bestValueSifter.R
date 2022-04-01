@@ -61,14 +61,16 @@ fetchInsiderTrading <-function(inputDF){
   resultDF
 }
 
-# FETCHES GRAHAM NUMBER, YEAR HIGH AND LOW, COMPUTES grahamMinusPrice
-fetchGrahamNumber<- function(inputDF){
+# FETCHES DCF, GRAHAM NUMBER, YEAR HIGH AND LOW, COMPUTES grahamMinusPrice
+fetchIntrinsicVal<- function(inputDF){
   returnDF <- data.frame(Symbol=character(0),
                          price=numeric(0),
                          grahamNumber=numeric(0), 
                          yearHigh=numeric(0),
                          yearLow=numeric(0),
-                         grahamMinusPrice=numeric(0))
+                         grahamMinusPrice=numeric(0), 
+                         DCF=numeric(0),
+                         DCFminusPrice=numeric(0))
   for (i in (1:nrow(inputDF))){
     print("")
     print(inputDF$Symbol[[i]])
@@ -82,42 +84,45 @@ fetchGrahamNumber<- function(inputDF){
     currRow <- nrow(returnDF) + 1
     grahamMinuesPrice <- as.numeric(keyMetrics$graham_number[[1]]) - as.numeric(companyOutlook[[1]]$profile$price)
     print(paste("grahamMinuesPrice: ", grahamMinuesPrice,sep = "") ) 
+    print(inputDF$`DCF(IntrinsicVal)`[[i]])
+    print(inputDF$DCFMinusPrice[[i]])
     returnDF[i,] <- c(inputDF$Symbol[[i]],
                       as.numeric(companyOutlook[[1]]$profile$price),
                       keyMetrics$graham_number[[1]],
                       companyOutlook[[1]]$metrics$yearHigh[[1]],
                       as.character(companyOutlook[[1]]$metrics$yearLow[[1]]),
-                      as.double(grahamMinuesPrice)
+                      as.double(grahamMinuesPrice),
+                      as.numeric(inputDF$`DCF(IntrinsicVal)`[[i]]),
+                      as.numeric(inputDF$DCFMinusPrice[[i]])
     )
-    
   }
   #returnDF$grahamMinuesPrice <- as.numeric(returnDF$grahamNumber) - as.numeric(returnDF$price)
   returnDF
 }
 
 
-outputDf <- subset(allStocksFilteredSifted,
+bestValFeedDF <- subset(allStocksFilteredSifted,
              !is.na(allStocksFilteredSifted$AnalystRating) & allStocksFilteredSifted$AnalystResponses>5,
-             select = c("Symbol", "DCFMinusPrice"))
+             select = c("Symbol", "DCF(IntrinsicVal)","DCFMinusPrice"))
 
-resultDF <- fetchInsiderTrading(outputDf) # adds Insider Trading 
+insiderTradDF <- fetchInsiderTrading(bestValFeedDF) # adds Insider Trading 
 
 
-resultDFgraham <- fetchGrahamNumber(outputDf)
+intrinsicValDF <- fetchIntrinsicVal(bestValFeedDF) # adds DCF, Graham and Year High and Low 
 
-totalDF <- merge(resultDFgraham,resultDF,by=c("Symbol"), all.x=TRUE)
+mostUndervaluedDF <- merge(resultDFgraham,resultDF,by=c("Symbol"), all.x=TRUE)
 
-totalDF$price<-as.numeric(totalDF$price)
-totalDF$yearHigh<-as.numeric(totalDF$yearHigh)
-totalDF$yearLow<-as.numeric(totalDF$yearLow)
-totalDF$grahamNumber<-as.numeric(totalDF$grahamNumber)
-totalDF$grahamMinusPrice<-as.numeric(totalDF$grahamMinusPrice)
+mostUndervaluedDF$price<-as.numeric(mostUndervaluedDF$price)
+mostUndervaluedDF$yearHigh<-as.numeric(mostUndervaluedDF$yearHigh)
+mostUndervaluedDF$yearLow<-as.numeric(mostUndervaluedDF$yearLow)
+mostUndervaluedDF$grahamNumber<-as.numeric(mostUndervaluedDF$grahamNumber)
+mostUndervaluedDF$grahamMinusPrice<-as.numeric(mostUndervaluedDF$grahamMinusPrice)
 
 # INSIDER TRADING DERIVES MARKET SENTIMENT 
 # Brooks ratio, which divides total insider sales of a company by total insider trades (purchases and sales) and then averages this ratio for thousands of stocks. 
 # If the average Brooks ratio is less than 40%, the market outlook is bullish; above 60% signals a bearish outlook.
 
 #Market Adjusted graham
-mean(totalDF$grahamMinusPrice, na.rm = T) # can't be this though because the difference depends on the price, larger price means more difference
+mean(mostUndervaluedDF$grahamMinusPrice, na.rm = T) # can't be this though because the difference depends on the price, larger price means more difference
 
 
