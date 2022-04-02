@@ -1,0 +1,26 @@
+PROJECT DIRECTORY ANATOMY (currently)
+
+ --> Data Pipeline ( all of the data sciency stuff happens here. Noah, Slav and Val will be working here primarily)
+
+          --> 4 NBs ( 4 automated R Scripts which will be scheduled to run every 24 or 12 hours. They pull in data from FMP, package it and ship it to a Relational DB )
+                        --> analystPicks.R
+                        --> bestValueSifter.R
+                        --> biggestGrowthSifter.R
+                        --> healthiestCompaniesSifter.R
+          
+          --> Research and Analysis ( This is where we will be analyzing data, looking for patterns and generating models. We will also probably draft graph layouts for client-side here)
+                        --> marketAnalysis.R
+                        
+          --> Words ( this is where we document our work, research, ideas, meetings, business Vocab, etc...)
+                        --> BackLogList
+                        --> BuzzWords            
+                        --> DocumentationReferences                       
+                        --> Glossary                       
+                        --> Idea                       
+                        --> MEETING AGENDA       
+                        
+          --> DatabaseDesign ( Layout of the SQL Database. Soon to come )
+  
+  --> Shiny Dashboard ( you can run this if you like it's just an R Shiny Application that I showed you. We can use this internally to explore data)
+  
+  

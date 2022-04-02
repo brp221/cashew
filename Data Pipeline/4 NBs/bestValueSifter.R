@@ -14,7 +14,7 @@ readRenviron('~/.Renviron')
 fetchInsiderTrading <-function(inputDF){
   resultDF <- data.frame(matrix(ncol = 3, nrow = 0))
   colnames(resultDF) <- c('Symbol', 'InsiderPurchased', 'TransactionCount')
-  for (i in (1:nrow(outputDf))){
+  for (i in (1:nrow(inputDF))){
     if(i%%5==0 ){
       print("SLOW DOWN BUDDY")
       Sys.sleep(12)
@@ -100,29 +100,26 @@ fetchIntrinsicVal<- function(inputDF){
   returnDF
 }
 
-
-bestValFeedDF <- subset(allStocksFilteredSifted,
-             !is.na(allStocksFilteredSifted$AnalystRating) & allStocksFilteredSifted$AnalystResponses>5,
-             select = c("Symbol", "DCF(IntrinsicVal)","DCFMinusPrice"))
+# Retrieve Symbol and DCF Value 
+bestValFeedDF <- subset(stocksPicked,stocksPicked$AnalystResponses>5,select = c("Symbol", "DCF(IntrinsicVal)","DCFMinusPrice"))
 
 insiderTradDF <- fetchInsiderTrading(bestValFeedDF) # adds Insider Trading 
 
-
 intrinsicValDF <- fetchIntrinsicVal(bestValFeedDF) # adds DCF, Graham and Year High and Low 
 
-mostUndervaluedDF <- merge(resultDFgraham,resultDF,by=c("Symbol"), all.x=TRUE)
+bestValueDF <- merge(intrinsicValDF,insiderTradDF,by=c("Symbol"), all.x=TRUE)
 
-mostUndervaluedDF$price<-as.numeric(mostUndervaluedDF$price)
-mostUndervaluedDF$yearHigh<-as.numeric(mostUndervaluedDF$yearHigh)
-mostUndervaluedDF$yearLow<-as.numeric(mostUndervaluedDF$yearLow)
-mostUndervaluedDF$grahamNumber<-as.numeric(mostUndervaluedDF$grahamNumber)
-mostUndervaluedDF$grahamMinusPrice<-as.numeric(mostUndervaluedDF$grahamMinusPrice)
+bestValueDF$price<-as.numeric(bestValueDF$price)
+bestValueDF$yearHigh<-as.numeric(bestValueDF$yearHigh)
+bestValueDF$yearLow<-as.numeric(bestValueDF$yearLow)
+bestValueDF$grahamNumber<-as.numeric(bestValueDF$grahamNumber)
+bestValueDF$grahamMinusPrice<-as.numeric(bestValueDF$grahamMinusPrice)
 
 # INSIDER TRADING DERIVES MARKET SENTIMENT 
 # Brooks ratio, which divides total insider sales of a company by total insider trades (purchases and sales) and then averages this ratio for thousands of stocks. 
 # If the average Brooks ratio is less than 40%, the market outlook is bullish; above 60% signals a bearish outlook.
 
 #Market Adjusted graham
-mean(mostUndervaluedDF$grahamMinusPrice, na.rm = T) # can't be this though because the difference depends on the price, larger price means more difference
+mean(bestValueDF$grahamMinusPrice, na.rm = T) # can't be this though because the difference depends on the price, larger price means more difference
 
 

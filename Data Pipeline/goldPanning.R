@@ -5,7 +5,8 @@
 
 #@abstract: Baby algorithm which serves to pull stock market data using FMP API and generates reccomendations on potential investments. 
 #The limitations of this algorithm are based on the FMP API membership which was 300 API calls per minute at the time that this prototype algo was written. 
-#The recommendations are outputed to an excel file. I think of this process as gold panning. The program will catch a lot of dirt rocks and other nonsense and strain for gold. 
+#The recommendations are outputed to an excel file. I think of this process as gold panning. The program will catch a lot of dirt, rocks and other nonsense.
+# After sifting only gold is left. 
 
 library(fmpapi)
 library(ggplot2)
@@ -20,36 +21,33 @@ fmp_api_key(api_key, overwrite = TRUE)
 readRenviron('~/.Renviron') 
 headers = c(`Upgrade-Insecure-Requests` = '1')
 params = list(`datatype` = 'json')
-#MAKES AN FMP API REQUEST AND PARŠES THEIR RESPONSE
+
+#MAKES AN FMP API REQUEST AND PAR$ES THEIR RESPONSE
 makeReqParseRes <- function(url){
   res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
   content(res)
 }
 
 allStocksUrl <- paste('https://financialmodelingprep.com//api/v3/stock-screener?isEtf=false&apikey=',api_key, sep = "")
-allStocks <- dplyr::bind_rows(makeReqParseRes(allStocksUrl))
+stocksDF<- dplyr::bind_rows(makeReqParseRes(allStocksUrl))
 
 url <- paste('https://financialmodelingprep.com//api/v3/financial-growth/AAPL&apikey=', api_key, sep = "")
-aaplGrowth <- fmp_financial_growth('AAPL')
 upcomingEarningsCal <- fmp_earnings_calendar()
 #FETCH STOCKS VIA PARAMETERS<- c(marketCapMoreThan, marketCapLowerThan, sector, limit, exchange)
 marketCapMoreThan <- as.character(1e7)
 marketCapLowerThan <- as.character(1e9)
-sectors <- unique(allStocks$sector)
-industry <- unique(allStocks$industry)
+sectors <- unique(stocksDF$sector)
+industry <- unique(stocksDF$industry)
 
 #DEFINE MARKET CAP CATEGORIES
-megaCap <- allStocks %>% filter(marketCap >=200000000000)
-largeCap <- allStocks %>% filter(marketCap <200000000000 & marketCap >=10000000000)
-midCap <- allStocks %>% filter(marketCap >=2000000000 & marketCap <10000000000)
-smallCap <- allStocks %>% filter(marketCap >=300000000 & marketCap <2000000000)
-microCap <- allStocks %>% filter(marketCap <300000000 )
+cutoff <- 10000000000
+bundleCap <- stocksDF %>% filter(marketCap >= cutoff)
 
-#MAKES AN FMP API REQUEST AND PARŠES THEIR RESPONSE
-makeReqParseRes <- function(url){
-  res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
-  content(res)
-}
+megaCap <- stocksDF %>% filter(marketCap >=200000000000)
+largeCap <- stocksDF %>% filter(marketCap <200000000000 & marketCap >=10000000000)
+midCap <- stocksDF %>% filter(marketCap >=2000000000 & marketCap <10000000000)
+smallCap <- stocksDF %>% filter(marketCap >=300000000 & marketCap <2000000000)
+microCap <- stocksDF %>% filter(marketCap <300000000 )
 
 #ANALYST RATINGS 
 formatAnalystRanking <- function(df, n=3){
@@ -75,8 +73,8 @@ formatAnalystRanking <- function(df, n=3){
   df
 }
 
-#SIFT THROUGH STOCKS, PICK OUT GOLD 
-stockSifter <- function(selectedStocks){
+#PICKS STOCKS
+stocksPicker <- function(selectedStocks){
   #PREPARE THE OUTPUT DF 
   stockMetaData <- data.frame(matrix(ncol = 15, nrow = 0))
   colnames(stockMetaData) <- c('Symbol', 'Price','OverallRating', 'DiscountedCashFlow', 'ReturnOnEarnings','ReturnOnAssets','Debt/Equity',
@@ -169,16 +167,15 @@ stockSifter <- function(selectedStocks){
     ))
   #print(stockMetaData$probBankruptcy)
   stockMetaData$DCFMinusPrice <-(as.numeric(stockMetaData$`DCF(IntrinsicVal)`) - as.numeric(stockMetaData$Price))
+  stockMetaData$AnalystResponses <- as.numeric(stockMetaData$AnalystResponses)
+  stockMetaData$AnalystRating <- as.numeric(stockMetaData$AnalystRating)
   stockMetaData
 } 
 
-#SORT/PICK NUGGETS OF GOLD FROM BEST OT WORST 
-stockPicker <- function(df, altZScoreHigher, overallRating, discountThresh ){
+# SIFTS STOCKS FOR GOLD 
+stockSifter <- function(df, altZScoreHigher, overallRating, discountThresh ){
   #get rid of companies which are high risk factors
-  df <- df %>% filter(altmanZScore >= altZScoreHigher & OverallRating > overallRating & PriceMinusGraham >= discountThresh)
-
-  #Order stocks in descending order (overall rating, piotroski score, PriceMinusGraham)
-  df <- df[order(df$OverallRating,df$piotroskiScore, df$PriceMinusGraham, decreasing = c(T,T,T)),]
+  df <- df %>% filter(altmanZScore >= altZScoreHigher & OverallRating > overallRating & DCFMinusPrice >= discountThresh)
 }
 
 #FILTER FUNCTIONS
@@ -210,31 +207,18 @@ filterByNDaysCalendar<-function(df, n){
   return(upcomingEarningsCal %>% filter(date<= (Sys.Date()+n) & date>= Sys.Date()))
 }
 
-largeCapSifted <- stockSifter(largeCap)
-largeCapOrdered<- stockPicker(largeCapSifted, 1.5, 20, -5)
-write_xlsx(largeCapOrdered,"/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/DraftOutput1.xlsx")
+stocksPicked <- stocksPicker(bundleCap)
+stockSifter(bundleCap)
+stocksSifted<- stockSifter(stocksPicked, altZScoreHigher = 1.0, overallRating = 12, discountThresh = -1000)
+stocksSifted$AnalystResponses <- as.numeric(stocksSifted$AnalystResponses)
 
+#write_xlsx(stocksSifted,"/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/DraftOutput1.xlsx")
 
-megaCapSifted <- stockSifter(megaCap)
-megaCapOrdered <- stockPicker(megaCapSifted, 1.5, 20, -5)
-
-#Get Peers 
-url = 'https://financialmodelingprep.com/api/v4/stock_peers?symbol=V&apikey=ce687b3fe0554890e65d6a5e48f601f9'
-peers <- makeReqParseRes(url)
 
 #LOOK TO THE FUTURE FIND NEW GOLD FIELDS INCORPORATE GROWTH
 nextWeekEarnings <- filterByCalendar(upcomingEarningsCal,Sys.Date()+7, Sys.Date())
 nextMonthEearnings <- filterByCalendar(upcomingEarningsCal,Sys.Date()+31, Sys.Date())
 nextNDayEarnings <- filterByNDaysCalendar(upcomingEarningsCal, 3)
-
-
-#Creating objects for a symbol 
-
-
-
-#analystRatingURL <- paste('https://financialmodelingprep.com/api/v3/analyst-stock-recommendations/V?limit=15&apikey=', api_key, sep = "")
-#analystRating <- dplyr::bind_rows(makeReqParseRes(analystRatingURL))
-#analystRating <- formatAnalystRanking(analystRating)
 
 
 

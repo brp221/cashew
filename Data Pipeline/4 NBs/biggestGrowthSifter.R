@@ -18,9 +18,8 @@ fmp_api_key(api_key, overwrite = TRUE)
 readRenviron('~/.Renviron') 
 
 
-inputDF <- subset(allStocksFilteredSifted,
-                   !is.na(allStocksFilteredSifted$AnalystRating) & allStocksFilteredSifted$AnalystResponses>5,
-                   select = c("Symbol"))
+biggestGrowthFeedDF <- subset(stocksPicked,stocksPicked$AnalystResponses>5,select = c("Symbol", "DCF(IntrinsicVal)","DCFMinusPrice"))
+
 
 # fetches growth KPIs 
 fetchGrowth <- function(inputDF){
@@ -86,4 +85,4 @@ fetchGrowth <- function(inputDF){
 rankSymbols <- function(){}
 
 
-biggestGrowers<-fetchGrowth(inputDF)
+biggestGrowers<-fetchGrowth(biggestGrowthFeedDF)

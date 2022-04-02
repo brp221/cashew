@@ -1,0 +1,17 @@
+VAL AND NOAH 2 DOs
+ 
+Noah :
+1. Go over my KPIs (Key Performance Indicators) and validate that they make sense.  Obviously its not an exact science but if you think that      
+we'd be better off having one KPI over another OR if we should add a new KPI OR just completely eliminate one, let me know which one and 
+your reasoning behind it. 
+
+
+Val :
+1. In marketAnalysis.R, graph KPIs of interest so that we can establish any patterns, categorizations and indications. 
+Analysis <- (distributions and correlations suggested, others welcome)
+KPIs <- (InsiderTrading, DCF, RevGrowth, NetIncomeGrowth suggested. Other KPIs of your interest are also encouraged)
+
+
+For Val AND Noah:
+1. Checkout the DirectoryAnatomy.txt to familiriaze yourself with the project better.  
+2. Explore technical indicator API (https://exploringfinance.github.io/fmpcloudr/#technical-indicators) so that we can make a trading bot >:)
