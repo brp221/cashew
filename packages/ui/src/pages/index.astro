@@ -1,17 +1,12 @@
 ---
+import Layout from '../layouts/Layout.astro';
 import Button from '../components/Button.jsx';
+
+const content = {
+	title: 'Cashew: Featured'
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
-		<title>Astro + TailwindCSS</title>
-	</head>
-
-	<body>
-		<div class="grid place-items-center h-screen content-center">
-			<Button client:load>Tailwind Button in Astro!</Button>
-		</div>
-	</body>
-</html>
+<Layout content={content}>
+	<Button client:load>Tailwind Button in Astro!</Button>
+</Layout>

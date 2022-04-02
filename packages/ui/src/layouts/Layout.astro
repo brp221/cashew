@@ -1,0 +1,30 @@
+---
+import '../styles/global.css';
+
+const { content } = Astro.props;
+const lang = content?.lang ?? 'en';
+const title = content?.title ?? 'Cashew';
+---
+
+<html lang={lang}>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<title>{title}</title>
+	</head>
+
+	<body>
+		<nav>
+			<a href="#">Featured</a>
+			<a href="#">Analyze</a>
+			<a href="#">Calendar</a>
+			<a href="#">About</a>
+		</nav>
+		<article>
+			<slot />
+		</article>
+		<footer>
+			© Cashew 2022
+		</footer>
+	</body>
+</html>
