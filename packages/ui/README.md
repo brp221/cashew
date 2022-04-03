@@ -3,7 +3,7 @@
 Uses the following libraries/frameworks:
 
 - [Astro](https://astro.build/)
-- [React](https://www.react.js.org/)
+- [React](https://www.reactjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Daisy UI](https://daisyui.com)
 
