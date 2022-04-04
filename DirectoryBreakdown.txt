@@ -19,7 +19,7 @@ PROJECT DIRECTORY ANATOMY (currently)
                         --> Idea                       
                         --> MEETING AGENDA       
                         
-          --> DatabaseDesign ( Layout of the SQL Database. Soon to come )
+          --> DatabaseDesign 
   
   --> Shiny Dashboard ( you can run this if you like it's just an R Shiny Application that I showed you. We can use this internally to explore data)
   

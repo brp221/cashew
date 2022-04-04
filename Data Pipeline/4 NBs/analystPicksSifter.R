@@ -15,3 +15,7 @@ analystRankingDF$ResponsesRank <- rank(analystRankingDF$AnalystResponses)
 
 # RANK : Maybe something more sophisticated. Maybe weight them according to responsesBand 
 analystRankingDF$AverageRank <- (0.8*analystRankingDF$AnalystRating) + (0.2*analystRankingDF$AnalystResponses)
+
+workingDir <- getwd()
+setwd("/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/TABLES")
+success <- write.csv(analystRankingDF,"AnalystPicks.csv", row.names = FALSE)

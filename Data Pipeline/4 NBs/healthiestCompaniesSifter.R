@@ -104,28 +104,9 @@ healthiestCompanies <- healthiestCompanies(healthiestFeedDF)
 
 
 
-finMetrics<- fmpc_financial_metrics("BABA", quarterly = F)
-##currentRatio
-#quickRatio
-#operatingCashFlowSalesRatio  OR easier priceToOperatingCashFlowsRatio
-
-
-
-finStatements<-fmp_cash_flow("BABA")
-#debt_repayment
-#operating_cash_flow
-
-
-
-finStatementsURL <- paste("https://financialmodelingprep.com/api/v3/income-statement/BABA?limit=5&apikey=ce687b3fe0554890e65d6a5e48f601f9")
-finStatements2<- dplyr::bind_rows(makeReqParseRes(finStatementsURL))
-#ebitda
-#netProfitMargin = netIncome /revenue *100
-
-
-finRatingsURL<- paste("https://financialmodelingprep.com/api/v3/rating/BABA?apikey=ce687b3fe0554890e65d6a5e48f601f9")
-finRating<- dplyr::bind_rows(makeReqParseRes(finRatingsURL))
-
+workingDir <- getwd()
+setwd("/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/TABLES")
+success <- write.csv(healthiestCompanies,"HealthiestCompanies.csv", row.names = FALSE)
 
 
 

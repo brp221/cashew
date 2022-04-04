@@ -123,3 +123,7 @@ bestValueDF$grahamMinusPrice<-as.numeric(bestValueDF$grahamMinusPrice)
 mean(bestValueDF$grahamMinusPrice, na.rm = T) # can't be this though because the difference depends on the price, larger price means more difference
 
 
+workingDir <- getwd()
+setwd("/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/TABLES")
+success <- write.csv(bestValueDF,"BestValueDF.csv", row.names = FALSE)
+

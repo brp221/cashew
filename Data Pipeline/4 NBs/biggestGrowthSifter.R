@@ -86,3 +86,10 @@ rankSymbols <- function(){}
 
 
 biggestGrowers<-fetchGrowth(biggestGrowthFeedDF)
+
+workingDir <- getwd()
+setwd("/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/TABLES")
+success <- write.csv(biggestGrowers,"BiggestGrowers.csv", row.names = FALSE)
+
+
+
