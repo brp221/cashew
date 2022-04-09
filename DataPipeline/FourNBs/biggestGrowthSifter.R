@@ -11,15 +11,34 @@
 # revGrowth2Yr
 # netIncomeGrowth1Yr
 # netIncomeGrowth2Yr
+library(fmpapi)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+require(httr)
+library(fmpcloudr)
+library("openxlsx")
+library("writexl")
+
+print(paste("KICK-OFF: ", Sys.time())) 
 
 #GLOBAL VARS
 api_key <- 'ce687b3fe0554890e65d6a5e48f601f9'   
 fmp_api_key(api_key, overwrite = TRUE)   
+fmpc_set_token(api_key)
 readRenviron('~/.Renviron') 
+headers = c(`Upgrade-Insecure-Requests` = '1')
+params = list(`datatype` = 'json')
 
+setwd("/Users/bratislavpetkovic/Desktop/cashew/")
+stocksPicked <- read.xlsx("DataPipeline/pickedCompanies.xlsx")
+biggestGrowthFeedDF<- subset(stocksPicked,select = c("Symbol" ))
 
-biggestGrowthFeedDF <- subset(stocksPicked,stocksPicked$AnalystResponses>5,select = c("Symbol", "DCF(IntrinsicVal)","DCFMinusPrice"))
-
+#MAKES AN FMP API REQUEST AND PAR$ES THEIR RESPONSE
+makeReqParseRes <- function(url){
+  res <- httr::GET(url, httr::add_headers(.headers=headers), query = params)
+  content(res)
+}
 
 # fetches growth KPIs 
 fetchGrowth <- function(inputDF){
@@ -54,13 +73,13 @@ fetchGrowth <- function(inputDF){
     employeeDF <- employeeDF[1:3,]
     
     #SANITY CHECK 
-    print("")
+    #print("")
     print(inputDF$Symbol[[i]])
-    print(paste("nrow(analystEstimates): ", nrow(analystEstimates)))
-    print(paste("nrow(finGrowth): ", nrow(finGrowth)))
-    print(paste("nrow(incomeStatements): ", nrow(incomeStatements)))
-    print(paste("nrow(finStatements): ", nrow(finStatements)))
-    print(paste("nrow(employeeDF): ", nrow(employeeDF)))
+    #print(paste("nrow(analystEstimates): ", nrow(analystEstimates)))
+    #print(paste("nrow(finGrowth): ", nrow(finGrowth)))
+    #print(paste("nrow(incomeStatements): ", nrow(incomeStatements)))
+    #print(paste("nrow(finStatements): ", nrow(finStatements)))
+    #print(paste("nrow(employeeDF): ", nrow(employeeDF)))
     
     revGrowth2Yr <- (analystEstimates$estimatedRevenueAvg[[1]] - incomeStatements$revenue[[1]])/incomeStatements$revenue[[1]]
     revGrowth1Yr <- (analystEstimates$estimatedRevenueAvg[[2]] - incomeStatements$revenue[[1]])/incomeStatements$revenue[[1]]
@@ -87,9 +106,29 @@ rankSymbols <- function(){}
 
 biggestGrowers<-fetchGrowth(biggestGrowthFeedDF)
 
-workingDir <- getwd()
-setwd("/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/TABLES")
-success <- write.csv(biggestGrowers,"BiggestGrowers.csv", row.names = FALSE)
+biggestGrowersPercent <- biggestGrowers
+biggestGrowersPercent$freeCashFlowGrowth <- as.numeric(biggestGrowersPercent$freeCashFlowGrowth) * 100
+biggestGrowersPercent$revGrowth1Yr <- as.numeric(biggestGrowersPercent$revGrowth1Yr) * 100
+biggestGrowersPercent$revGrowth2Yr <- as.numeric(biggestGrowersPercent$revGrowth2Yr) * 100
+biggestGrowersPercent$netIncomeGrowth1Yr <- as.numeric(biggestGrowersPercent$netIncomeGrowth1Yr) * 100
+biggestGrowersPercent$netIncomeGrowth2Yr <- as.numeric(biggestGrowersPercent$netIncomeGrowth2Yr) * 100
+biggestGrowersPercent$debt_repayment <- as.numeric(biggestGrowersPercent$debt_repayment)
+
+
+
+biggestGrowers$freeCashFlowGrowth <- as.numeric(biggestGrowers$freeCashFlowGrowth)
+biggestGrowers$revGrowth1Yr <- as.numeric(biggestGrowers$revGrowth1Yr)
+biggestGrowers$revGrowth2Yr <- as.numeric(biggestGrowers$revGrowth2Yr)
+biggestGrowers$netIncomeGrowth1Yr <- as.numeric(biggestGrowers$netIncomeGrowth1Yr)
+biggestGrowers$netIncomeGrowth2Yr <- as.numeric(biggestGrowers$netIncomeGrowth2Yr)
+biggestGrowers$debt_repayment <- as.numeric(biggestGrowers$debt_repayment)
+
+setwd("/Users/bratislavpetkovic/Desktop/cashew/")
+success <- write_xlsx(biggestGrowers,"DataPipeline/TABLES/BiggestGrowers.xlsx")
+# FROM 16:44:48 til 16:49:02 = 5 minutes 
+print(paste("FINAL WHISTLE: ", Sys.time())) 
+
+
 
 
 

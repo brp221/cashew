@@ -246,4 +246,15 @@ ggplot(insideTradingDFCOPY, aes(x=TransactionCountBand, y=InsiderPurchased)) +
 #--------------------------------------------------------------------------------------------------------------------
 # INSIDER TRADING AND DCFMINUSPRICE CORRELATION 
 
+#--------------------------------------------------------------------------------------------------------------------
+# DEBT REPAYMENT DISTRIBUTION
+res <-quantile(debt_repayment, probs = c(.02,0.1,0.25,0.5,0.75,0.9,.98), na.rm=T)
+hist(debt_repayment, breaks=50)
+
+#--------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 

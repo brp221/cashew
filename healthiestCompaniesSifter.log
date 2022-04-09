@@ -1,0 +1,18 @@
+Warning message:
+package 'tidyr' was built under R version 4.0.5 
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+package 'dplyr' was built under R version 4.0.5 
+Loading required package: httr
+Error: FMP API token has not been set. Use fmpc_set_token to set the API token.
+Execution halted

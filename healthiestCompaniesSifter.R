@@ -1,20 +1,27 @@
-# HEALTHIEST COMPANIES
-
+                                                      # HEALTHIEST COMPANIES
 # LIQUIDITY (current ratio, quick ratio, and operating cash flow ratio.)
     # A quick ratio lower than 1.0 is often a warning sign, as it indicates current liabilities exceed current assets.
-
 # SOLVENCY (debt-to-assets ratio, the interest coverage ratio, the equity ratio, and the debt-to-equity (D/E) ratio)
   #Solvency ratios calculate a company's long-term debt in relation to its assets or equity.
   #D/E ratios vary widely between industries. However, regardless of the specific nature of a business, a downward trend 
       #over time in the D/E ratio is a good indicator a company is on increasingly solid financial ground.
-  
 # OPERATING EFFICIENCY
   # Known as EBITDA (ANALYST ESTIMATES)
-
 # Profitability (ROA, ROE )
   # Net Profit Margin:  evaluating profitability is net margin, the ratio of net profits to total revenues (Net profit margin is one of the most important indicators of a company's financial health. By tracking increases and decreases in its net profit margin, a company can assess whether current practices are working and forecast profits based on revenues)
 
-# Gave up : equityRatio, debt-to-assets ratio, the interest coverage ratio, 
+library(fmpapi)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+require(httr)
+library(fmpcloudr)
+library("openxlsx")
+library("writexl")
+
+setwd("/Users/bratislavpetkovic/Desktop/cashew/")
+stocksPicked <- read.xlsx("DataPipeline/pickedCompanies.xlsx")
+healthiestFeedDF<- subset(stocksPicked,select = c("Symbol"))
 
 # FETCHES COPMANY HEALTH INFORMATION
 healthiestCompanies <- function(inputDF){
@@ -74,39 +81,34 @@ healthiestCompanies <- function(inputDF){
     netProfitMargin <- ((finStatements$netIncome[[1]] / finStatements$revenue[[1]])*100 )
     
     #DATA MASSAGING PART
-    if(is.null(finRatios$interestCoverage)){finRatios$interestCoverage[[1]]<- -1.11111 } #secret value 
-    if(is.null(finRatios$returnOnAssets[[1]])){finRatios$returnOnAssets[[1]]<- -1.11111 } #secret value 
-    if(is.null(finRatios$returnOnEquity[[1]])){finRatios$returnOnEquity[[1]][[1]]<- -1.11111 } #secret value 
-    if(is.null(finRatios$debtEquityRatio[[1]])){finRatios$debtEquityRatio[[1]]<- -1.11111 } #secret value 
-    if(is.null(finRatios$priceToOperatingCashFlowsRatio[[1]])){finRatios$priceToOperatingCashFlowsRatio[[1]]<- -1.11111 } #secret value 
+    #if(is.null(finRatios$interestCoverage)){finRatios$interestCoverage[[1]]<- -1.11111 } #secret value 
+#    if(is.null(finScores$piotroskiScore)){finScores$piotroskiScore[[1]]<- -1.11111 } #secret value 
+    #if(is.null(finRatios$returnOnAssets[[1]])){finRatios$returnOnAssets[[1]]<- -1.11111 } #secret value 
+    #if(is.null(finRatios$returnOnEquity[[1]])){finRatios$returnOnEquity[[1]][[1]]<- -1.11111 } #secret value 
+    #if(is.null(finRatios$debtEquityRatio[[1]])){finRatios$debtEquityRatio[[1]]<- -1.11111 } #secret value 
+    #if(is.null(finRatios$priceToOperatingCashFlowsRatio[[1]])){finRatios$priceToOperatingCashFlowsRatio[[1]]<- -1.11111 } #secret value 
     
     returnDF[i,] <- c(inputDF$Symbol[[i]],
-                      as.numeric(finScores$piotroskiScore),
-                      as.numeric(finMetrics$quickRatio[[1]]),
-                      as.numeric(finMetrics$currentRatio[[1]]),
-                      as.numeric(finRatios$priceToOperatingCashFlowsRatio[[1]]),
-                      as.numeric(finStatements$ebitda[[1]]),
-                      as.numeric(finRatios$returnOnAssets[[1]]),
-                      as.numeric(finRatios$returnOnEquity[[1]]),
-                      as.numeric(finRatios$debtEquityRatio[[1]]),
-                      as.numeric(netProfitMargin),
-                      as.numeric(finRatios$interestCoverage[[1]]))
-  }
+                      ifelse(length(finScores)>0,finScores$piotroskiScore[[1]],NA),
+                      ifelse(length(finMetrics)>0,finMetrics$quickRatio[[1]],NA),
+                      ifelse(length(finMetrics)>0,finMetrics$currentRatio[[1]],NA),
+                      ifelse((length(finRatios)>0 & !is.null(finRatios$priceToOperatingCashFlowsRatio)),finRatios$priceToOperatingCashFlowsRatio[[1]],NA),
+                      ifelse(length(finStatements)>0,finStatements$ebitda[[1]],NA),
+                      ifelse((length(finRatios)>0 & !is.null(finRatios$returnOnAssets)),finRatios$returnOnAssets[[1]],NA),
+                      ifelse((length(finRatios)>0 & !is.null(finRatios$returnOnEquity)),finRatios$returnOnEquity[[1]],NA),
+                      ifelse((length(finRatios)>0  & !is.null(finRatios$debtEquityRatio)),finRatios$debtEquityRatio[[1]],NA),
+                      netProfitMargin,
+                      ifelse((length(finRatios)>0 & !is.null(finRatios$interestCoverage)) ,finRatios$interestCoverage[[1]],NA))
+              }
   returnDF
 }
-
-
-healthiestFeedDF<- subset(stocksPicked,stocksPicked$AnalystResponses>5,select = c("Symbol", "DCF(IntrinsicVal)","DCFMinusPrice"))
-
 
 
 healthiestCompanies <- healthiestCompanies(healthiestFeedDF)
 
 
-
-workingDir <- getwd()
-setwd("/Users/bratislavpetkovic/Desktop/cashew/Data Pipeline/TABLES")
-success <- write.csv(healthiestCompanies,"HealthiestCompanies.csv", row.names = FALSE)
+setwd("/Users/bratislavpetkovic/Desktop/cashew/")
+success <- write_xlsx(healthiestCompanies,"DataPipeline/TABLES/HealthiestCompanies.xlsx")
 
 
 
