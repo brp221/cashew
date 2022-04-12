@@ -13,12 +13,8 @@ DEPLOYMENT: https://medium.com/@jodorning/how-to-deploy-a-bokeh-app-on-heroku-48
  
 
 GALLERY : https://docs.bokeh.org/en/latest/docs/gallery.html#gallery
-
           https://docs.bokeh.org/en/0.11.0/docs/reference/charts.html
-
           https://docs.bokeh.org/en/latest/docs/user_guide/annotations.html
-
- 
 
 DIAGRAM : https://lucid.app/lucidchart/88179692-a32c-44d5-9764-fd41fed2faaf/edit?beaconFlowId=8B2327B38D911047&invitationId=inv_2e944c09-23db-44cb-bc6a-4e918bf5ed9c&page=0_0#
 
@@ -29,5 +25,13 @@ FILTERING: https://www.tutorialspoint.com/bokeh/bokeh_filtering_data.htm ( USe t
  
 
 STYLES: https://docs.bokeh.org/en/latest/docs/user_guide/tools.html#hovertool
+        https://docs.bokeh.org/en/latest/docs/reference/palettes.html
+
+
 
 DB: https://data.heroku.com/datastores/d5838b41-0457-45ec-99dc-b9fc7b72426d#administration
+
+
+
+HOLY MOLY : https://bokeh.org/
+            https://python.astrotech.io/data-science/visualization/bokeh.html
