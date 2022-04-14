@@ -3,14 +3,21 @@ from sqlalchemy import create_engine
 
 # READ THE TABLES
 analystPicksDF = pd.read_excel('/Users/bratislavpetkovic/Desktop/cashew/DataPipeline/TABLES/ANalystRanking.xlsx')
+analystPicksDF=analystPicksDF.round(2)
+
 biggestGrowersDF = pd.read_excel('/Users/bratislavpetkovic/Desktop/cashew/DataPipeline/TABLES/BiggestGrowers.xlsx')
+biggestGrowersDF=biggestGrowersDF.round(2)
+
 HealthiestCompaniesDF = pd.read_excel('/Users/bratislavpetkovic/Desktop/cashew/DataPipeline/TABLES/HealthiestCompanies.xlsx')
+HealthiestCompaniesDF=HealthiestCompaniesDF.round(2)
+
 BestValueDF = pd.read_excel('/Users/bratislavpetkovic/Desktop/cashew/DataPipeline/TABLES/BestValued.xlsx')
+BestValueDF=BestValueDF.round(2)
 
 print(BestValueDF.head())
 
 # CONNECT TO DB
-DATABASE_URL = "postgresql://evkccxwslqxbud:5a4aafe1962d3ce9022c83f4e7358d2a62dc6197620ecabb0c68557ec6bb5483@ec2-52-73-155-171.compute-1.amazonaws.com:5432/de6ao7pbg15j5b"
+DATABASE_URL = "postgresql://rhrqiookrgcrnz:fcd238d060c40424f6e05b4ca28b9a07126e0a29a76eb1c4f3c83530a044174b@ec2-34-194-73-236.compute-1.amazonaws.com:5432/d4nvq9ol4b3f2k"
 engine = create_engine(DATABASE_URL, echo = False)
 
 # (OVER)WRITE TABLES TO DB 
