@@ -4,23 +4,24 @@ FEATURES TO IMPLEMENT
 
 
 (1) ADJUSTABLE GRAPHS ON THE SAME 
-        (xAxis, yAxis customizability)
-        (Lables to indicate companies- think of the movie dashboard)
+    (xAxis, yAxis customizability)
+    (Lables to indicate companies- think of the movie dashboard)
         
 (2) Joining 2 data tables to produce one 
 
 (3) CALENDAR PAGE 
 
 (4) DESIGN :
-        (TITLES OF DISPLAYS Vs, titles of widgets)
-        (throws some color on the tables: https://towardsdatascience.com/stunning-tables-using-bokeh-and-svg-e612a6f1c541)
-        (for the love of god format the decimal points )
-        (?RANK METHODOLOGY?)
+    (TITLES OF DISPLAYS (CAPITAL) Vs titles of widgets (lowe))
+    (throws some color on the tables: https://towardsdatascience.com/stunning-tables-using-bokeh-and-svg-e612a6f1c541)
+    (FILTERS ON THE OUTSIDES OF TABLES SO THAT THE USER CAN CONTROL WHAT THEY SEE ( LOCAL FILTERS OBVIOUSLY, 4 SETS in TOT + GLOBAL))
+    (?RANK METHODOLOGY?)
         
         
 (5) CHARTOLOGY :
     (1) CANDLE STICK WITH INDICATORS
     (2) INSIDER TRADING BAR CHART 
-    (3) GROWTH/VALUE OF COMPANY VS PEERS
-    (4) EARNIGNS BAR CHART (future and present, CONVERT TO LINE CHART FOR QUARTER ESTIMATES)
-    (5) COMPARISON VS PEERS (of similar size) (peers define as same sector similar marketCap?)
+    (3) GROWTH/VALUE OF COMPANY VS PEERS 
+    (4) EARNIGNS BAR CHART (future and present, CONVERT TO LINE CHART FOR QUARTER + ANNUAL ESTIMATES)
+    (5) COMPARISON VS PEERS/ individual company (of similar size) (peers define as same sector similar marketCap?) ( SPYDER STATIC OUTSOURCE BOKEH) 
+    (6) CLOUT CHARTING (SOCIAL MEDIA POPULARITY) ( DIQUE WHAT CJART YET) ( Ridge plot with distribution?)

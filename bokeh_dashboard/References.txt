@@ -35,3 +35,6 @@ DB: https://data.heroku.com/datastores/d5838b41-0457-45ec-99dc-b9fc7b72426d#admi
 
 HOLY MOLY : https://bokeh.org/
             https://python.astrotech.io/data-science/visualization/bokeh.html
+            http://holoviews.org/gallery/index.html
+            https://pauliacomi.com/2020/06/07/plotly-v-bokeh.html + https://separation-explorer.herokuapp.com/app
+            bleh https://holoviz.org/Roadmap.html
