@@ -254,6 +254,7 @@ fig.write_image("radarChart.jpg")
 radarChartStatic = Div(text="""<img src="bokeh_dashboard/static_content/radarChart.png" alt="radarChartStatic"> """,width=200, height=100)
 show(radarChartStatic)
 div_image = Div(text="""<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png" alt="div_image">""", width=150, height=150)
+
 show(div_image)
 #       <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<    COMPANY HEALTH vs (PEERS)  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -86,7 +86,7 @@ hv.save(violin, 'violin.png')
 html = file_html(violin, CDN, "my plot")
 
 
-div = Div(text="""Your <img src="violin.png" alt="Italian Trulli"> """,
+div = Div(text="""Your <img src="" alt="Italian Trulli"> """,
 width=200, height=100)
 
 show(div)
@@ -132,19 +132,6 @@ x=[*x, x[0]]
 x2=[*x2, x2[0]]
 x3=[*x3, x3[0]]
 
-
-
-categories = ['Food Quality', 'Food Variety', 'Service Quality', 'Ambience', 'Affordability']
-categories = [*categories, categories[0]]
-
-restaurant_1 = [4, 4, 5, 4, 3]
-restaurant_2 = [5, 5, 4, 5, 2]
-restaurant_3 = [3, 4, 5, 3, 5]
-restaurant_1 = [*restaurant_1, restaurant_1[0]]
-restaurant_2 = [*restaurant_2, restaurant_2[0]]
-restaurant_3 = [*restaurant_3, restaurant_3[0]]
-
-
 fig = go.Figure(
     data=[
         go.Scatterpolar(r=x, theta=categories, fill='toself', name='AAPL'),
@@ -152,17 +139,17 @@ fig = go.Figure(
         go.Scatterpolar(r=x3, theta=categories, fill='toself', name='GOOGL')
     ],
     layout=go.Layout(
-        title=go.layout.Title(text='COMPANY HEALTH COMPARISON'),
-        polar={'radialaxis': {'visible': True}},
+        #title=go.layout.Title(text='COMPANY HEALTH COMPARISON'),
+        #polar={'radialaxis': {'visible': True}},
         showlegend=True,
-        width=500,
-        height=500
+        width=400,
+        height=400
     )
 )
 
 pyo.plot(fig)
 
-fig.write_image("images/radarChart.png")
+fig.write_image("bokeh_dashboard/static_content/radarChart.png")
 
 
 
