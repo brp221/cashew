@@ -31,9 +31,10 @@ analystRankingDF$RatingRank <- rank(analystRankingDF$AnalystRating)
 analystRankingDF$ResponsesRank <- rank(analystRankingDF$AnalystResponses)
 
 # RANK : Maybe something more sophisticated. Maybe weight them according to responsesBand 
-analystRankingDF$AverageRank <- (0.8*analystRankingDF$AnalystRating) + (0.2*analystRankingDF$AnalystResponses)
+analystRankingDF$AverageRank <- (0.8*analystRankingDF$RatingRank) + (0.2*analystRankingDF$ResponsesRank)
 
 setwd("/Users/bratislavpetkovic/Desktop/cashew/")
 success <- write_xlsx(analystRankingDF,"DataPipeline/TABLES/AnalystRanking.xlsx")
 
 print(paste("FINAL WHISTLE: ", Sys.time())) 
+

@@ -7185,3 +7185,30 @@ category: Client error
 reason: Too Many Requests (RFC 6585)
 In addition: There were 17 warnings (use warnings() to see them)
 Execution halted
+Warning message:
+package 'tidyr' was built under R version 4.0.5 
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+package 'dplyr' was built under R version 4.0.5 
+Loading required package: httr
+[1] "KICK-OFF:  2022-04-15 09:11:53"
+Your original .Renviron will be backed up and stored in your R HOME directory if needed.
+Your API key has been stored in your .Renviron file and can be accessed by `Sys.getenv('FMP_API_KEY')`
+To use now, restart R or run `readRenviron('~/.Renviron')`
+[1] "ce687b3fe0554890e65d6a5e48f601f9"
+[1] "AAPL"
+Error in `[<-.data.frame`(`*tmp*`, i, , value = c("AAPL", "0.266993798132625",  : 
+  replacement has 7 items, need 8
+Calls: fetchGrowth -> [<- -> [<-.data.frame
+In addition: There were 14 warnings (use warnings() to see them)
+Execution halted

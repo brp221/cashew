@@ -1,6 +1,24 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
+from urllib.request import urlopen
+import certifi
+import json
+
+def get_jsonparsed_data(url):
+    response = urlopen(url, cafile=certifi.where())
+    data = response.read().decode("utf-8")
+    return json.loads(data)
+
+
+# METADATA TABLE
+
+screenerURL = ("https://financialmodelingprep.com/api/v3/stock-screener?limit=3000&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+metadataDF = pd.DataFrame.from_dict(get_jsonparsed_data(screenerURL))
+metadataDF_sub = metadataDF[['symbol', 'companyName', 'marketCap', 'sector', 'industry',
+       'price', 'lastAnnualDividend','exchangeShortName', 'country', 'isEtf',]]
+
+
 # READ THE TABLES
 analystPicksDF = pd.read_excel('/Users/bratislavpetkovic/Desktop/cashew/DataPipeline/TABLES/ANalystRanking.xlsx')
 analystPicksDF=analystPicksDF.round(2)
@@ -23,6 +41,10 @@ engine = create_engine(DATABASE_URL, echo = False)
 # (OVER)WRITE TABLES TO DB 
 analystPicksDF.to_sql('analyst_rating', con = engine, if_exists='replace')
 print(engine.execute("SELECT * FROM \"analyst_rating\" ").fetchone())
+
+
+metadataDF_sub.to_sql('symbol_metadata', con = engine, if_exists='replace')
+print(engine.execute("SELECT * FROM \"symbol_metadata\" ").fetchone())
 
 
 biggestGrowersDF.to_sql('biggest_growers', con = engine, if_exists='replace')
