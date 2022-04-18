@@ -178,7 +178,6 @@ earningsBar.xgrid.grid_line_color = None
 url = ("https://financialmodelingprep.com/api/v3/analyst-estimates/NVDA?limit=4&apikey=ce687b3fe0554890e65d6a5e48f601f9")
 estimatedEarningsDF = pd.DataFrame.from_dict(get_jsonparsed_data(url))
 
-# QUARTER : api/v3/income-statement/AAPL?period=quarter&limit=400&apikey=ce687b3fe0554890e65d6a5e48f601f9
 incomeStatURL = ("https://financialmodelingprep.com/api/v3/income-statement/NVDA?limit=4&apikey=ce687b3fe0554890e65d6a5e48f601f9")
 incomeStatementDF  = pd.DataFrame.from_dict(get_jsonparsed_data(incomeStatURL))
 

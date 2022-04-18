@@ -10,12 +10,26 @@ from urllib.request import urlopen
 import certifi
 import json
 
+from sqlalchemy import column
+from sqlalchemy import create_engine
+# from sqlalchemy import select
+from sqlalchemy import table
+
 def get_jsonparsed_data(url):
     response = urlopen(url, cafile=certifi.where())
     data = response.read().decode("utf-8")
     return json.loads(data)
 
-
+def fetch_symbol_metadata():
+    # METADATA
+    symbol_metadata = table("symbol_metadata", column("symbol"), column("companyName"), column("sector"),column("industry"), column("country"), 
+                           column("exchangeShortName"), column("price"), column("marketCap"), column("isEtf"))
+    symbol_metadata_stmt = symbol_metadata.select() #.where(analyst_rating.c.name == 'Bob')
+    symbol_metadata_df = pd.read_sql_query(symbol_metadata_stmt, engine)
+    symbol_metadata_df["Symbol"] = symbol_metadata_df["symbol"]
+    del symbol_metadata_df["symbol"]
+    
+    
 import plotly.graph_objects as go
 
 import pandas as pd

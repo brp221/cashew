@@ -45,3 +45,25 @@ Your API key has been stored in your .Renviron file and can be accessed by `Sys.
 To use now, restart R or run `readRenviron('~/.Renviron')`
 [1] "ce687b3fe0554890e65d6a5e48f601f9"
 [1] "FINAL WHISTLE:  2022-04-15 08:55:12"
+Warning message:
+package 'tidyr' was built under R version 4.0.5 
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+package 'dplyr' was built under R version 4.0.5 
+Loading required package: httr
+[1] "KICK-OFF:  2022-04-16 08:58:07"
+Your original .Renviron will be backed up and stored in your R HOME directory if needed.
+Your API key has been stored in your .Renviron file and can be accessed by `Sys.getenv('FMP_API_KEY')`
+To use now, restart R or run `readRenviron('~/.Renviron')`
+[1] "ce687b3fe0554890e65d6a5e48f601f9"
+[1] "FINAL WHISTLE:  2022-04-16 08:58:08"
