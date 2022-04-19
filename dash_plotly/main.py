@@ -21,7 +21,7 @@ sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 from helper_functions import  get_jsonparsed_data, health_preparer, discount_preparer, growers_preparer, analyst_rating_preparer
 from db_helpers import fetch_symbol_metadata, fetch_analyst_rating, fetch_biggest_growers, fetch_best_value, fetch_healthiest_companies
-from ui_styles import tabs_styles, dt_style
+from ui_styles import tabs_styles, dt_style, style_data_conditional
 from callback_wrapper import candlestick_wrapper, scatter_wrapper, radar_wrapper, quarter_earnings_wrapper, annual_earnings_wrapper, insider_trade_wrapper
 
 
@@ -72,7 +72,7 @@ analyst_rating_chosen = ['Symbol', 'AnalystRating', 'AnalystResponses', 'RatingR
 dash_table1 = dash_table.DataTable(
     analyst_rating_df.to_dict('records'),
     [{"name": i, "id": i} for i in analyst_rating_chosen],
-    page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True)
+    page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True, editable=True, style_data_conditional=style_data_conditional)
 dash_table2 = dash_table.DataTable(
     healthiest_companies_metadata_df.to_dict('records'),
     [{"name": i, "id": i} for i in healthiest_chosen],
@@ -87,7 +87,7 @@ dash_table4 = dash_table.DataTable(
     page_size=12, id = "DT_growers",style_data = dt_style, fill_width=True )
 
 column_select1 = dcc.Dropdown( list(analyst_rating_df.columns), list(analyst_rating_df.columns),
-    multi=True, id = 'AR_columns', style={'display': 'inline-block','marginRight':10,'marginBottom':110, 'width':120, 'height':300 }
+    multi=True, id = 'AR_columns', style={'display': 'inline-block', 'marginRight':10,'marginBottom':110, 'width':120, 'height':300 }
     )
 column_select2 = dcc.Dropdown( list(healthiest_companies_metadata_df.columns), list(healthiest_companies_metadata_df.columns),
     multi=True, id = 'HC_columns', style={'display': 'inline-block', 'marginBottom':70, 'marginTop':10,'marginRight':10, 'width':180, 'height':350 }
@@ -96,7 +96,7 @@ column_select3 = dcc.Dropdown( list(best_value_df.columns), list(best_value_df.c
     multi=True, id = 'BV_columns', style={'display': 'inline-block', 'marginBottom':110, 'marginLeft':10, 'width':180, 'height':300 }
     )
 column_select4 = dcc.Dropdown( list(biggest_growers_df.columns), list(biggest_growers_df.columns),
-    multi=True, id = 'BG_columns', style={'display': 'inline-block', 'marginBottom':70, 'marginTop':10,'marginRight':10, 'width':120, 'height':350 }
+    multi=True, id = 'BG_columns', style={'display': 'inline-block', 'marginRight':30,'marginBottom':110, 'width':120, 'height':350 }
     )
 
 
@@ -123,16 +123,16 @@ app.layout = html.Div(id = 'parent', children = [
                 multi=True, id = 'sectorSelect', style={'display': 'inline-block', 'marginLeft':100,'marginBottom':8, 'marginTop':8,'marginRight':100, 'width':1450, 'height':40 }
                 ),
              html.Div([
-                 html.Div([column_select1], style={'display': 'inline-block', 'marginLeft':2,'marginBottom':10}),
-                 html.Div([dash_table1], style={'display': 'inline-block', 'marginLeft':2,'marginBottom':10}),
+                 html.Div([column_select1], style={'display': 'inline-block', 'marginLeft':200,'marginBottom':10}),
+                 html.Div([dash_table1], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
                  html.Div([dash_table3], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':10}),
-                 html.Div([column_select3], style={'display': 'inline-block', 'marginLeft':2,'marginBottom':10}),
+                 html.Div([column_select3], style={'display': 'inline-block', 'marginRight':20, 'marginBottom':10}),
              ]),
              html.Div([
-                 html.Div([column_select4], style={'display': 'inline-block', 'marginLeft':2,'marginBottom':10}),
-                 html.Div([dash_table4], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':10}),
+                 html.Div([column_select4], style={'display': 'inline-block', 'marginLeft':200,'marginBottom':10}),
+                 html.Div([dash_table4], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
                  html.Div([dash_table2], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':10}),
-                 html.Div([column_select2], style={'display': 'inline-block', 'marginLeft':2,'marginBottom':10}),
+                 html.Div([column_select2], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
              ])
         ]),
         dcc.Tab(label='RESEARCH', children=[
@@ -146,15 +146,23 @@ app.layout = html.Div(id = 'parent', children = [
             ]),
         dcc.Tab(label='ANALYSIS', children=[
             html.Div([ 
-                dcc.Input(id="stockSymbol", type="text", placeholder="symbol",value="NVDA", debounce=True),
-                html.Div([html.H4('CANDLESTICK'),dcc.Graph(id="candleStick")], style={'display': 'inline-block', 'marginLeft':5,}),
-                html.Div([html.H4('Health Comparison'),dcc.Graph(id="radarChart")], style={'display': 'inline-block'}),
-                html.Div([html.H4('Earnings'),
-                          dcc.Tabs([
-                              dcc.Tab(label='ANNUAL', children=[ html.Div([dcc.Graph(id="earningsBar")],  style={'display': 'inline-block', 'marginLeft':20,'marginBottom':40})]),
-                              dcc.Tab(label='QUARTER',children=[ html.Div([dcc.Graph(id="earningsLine")], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':40})])
+                html.Div([dcc.Tabs([
+                              dcc.Tab(label='ANNUAL', children=[ html.Div([dcc.Graph(id="earningsBar")],  style={'display': 'inline-block', 'marginLeft':20, 'marginTop':20})]),
+                              dcc.Tab(label='QUARTER',children=[ html.Div([dcc.Graph(id="earningsLine")], style={'display': 'inline-block', 'marginLeft':20, 'marginTop':20})])
                               ]),
-                          ], style={'display': 'inline-block', 'width':300}),
+                          ], style={'display': 'inline-block','marginLeft':20, 'marginTop':20, 'width':300}),
+                
+                html.Div([   
+                            html.Div([  dcc.Input(id="stockSymbol", type="text", placeholder="symbol",value="NVDA", debounce=True,
+                                      style={'display': 'inline-block', 'marginLeft':300}),      ])  ,
+                            html.Div([  dcc.Graph(id="candleStick",
+                                      style={'display': 'inline-block', 'marginLeft':300})      ])  
+                    
+                    ], 
+                style={'display': 'inline-block', 'marginLeft':1,'marginRight':1,'marginBottom':10, 'marginTop':10}),
+                
+                html.Div([dcc.Graph(id="radarChart")], style={'display': 'inline-block', 'marginRight':20,'marginBottom':10, 'marginTop':10})
+                
                 
             ]),
             html.Div([ 
