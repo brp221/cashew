@@ -11,7 +11,7 @@ import plotly.express as px
 
 import sys
 sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
-from helperFunctions import  get_jsonparsed_data
+from helper_functions import  get_jsonparsed_data
 
 def candlestick_wrapper(symbol):
     print("Candlestick wrapper:"+symbol)
@@ -29,15 +29,22 @@ def candlestick_wrapper(symbol):
     return fig
 
 def scatter_wrapper( table1, table2):
-    
+    print("\n table1:", table1.columns)
+    print("\n table2:", table2.columns)
+    if('rank_overall_x' in table1.columns):
+        del table1['rank_overall_x']
+    if('rank_overall_y' in table2.columns):
+        del table2['rank_overall_y']
+    print("\n table1:", table1.columns)
+    print("\n table2:", table2.columns)
     merged_df = table1.merge(table2)
-
-    fig = px.scatter(merged_df, x="rank_overall_bv", y="rank_overall_hc",
+    print("merged_df:", len(merged_df), "\n\n")
+    fig = px.scatter(merged_df, x="rank_overall_x", y="rank_overall_y",
     	         size="marketCap", color="sector",
                      hover_name="Symbol", log_x=True, size_max=60)
     
     fig.update_layout(
-        width=700, height = 700
+        width=1100, height = 700
     )
     #fig.show()
     return fig

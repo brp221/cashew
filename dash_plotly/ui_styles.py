@@ -32,3 +32,11 @@ main_tabs_style = {
     'border-radius': '4px',
     'padding':'6px'
 }
+
+
+dt_style={
+    'whiteSpace': 'normal',
+    'height': 'auto',
+    'width' : '500',
+    'lineHeight': '15px'
+}

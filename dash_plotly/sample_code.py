@@ -47,37 +47,25 @@ fig.show()
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 import plotly.express as px
 
-healthiest_companies_metadata_df["rank_ROA"] =  healthiest_companies_metadata_df["ROA"].rank(pct=True)
-healthiest_companies_metadata_df["rank_ROE"] =  healthiest_companies_metadata_df["ROE"].rank(pct=True)
-healthiest_companies_metadata_df["rank_piotroski"] =  healthiest_companies_metadata_df["piotroskiScore"].rank(pct=True)
-healthiest_companies_metadata_df["rank_DE"] =  healthiest_companies_metadata_df["debtEquityRatio"].rank(method="max", pct=True)
-healthiest_companies_metadata_df["rank_overall_hc"] = ((0.25* healthiest_companies_metadata_df["rank_ROA"]) + (0.25* healthiest_companies_metadata_df["rank_ROE"]) 
-                                                    + (0.25* healthiest_companies_metadata_df["rank_piotroski"]) + (0.25* healthiest_companies_metadata_df["rank_DE"]))
 
-best_value_metadata_df["DCF_Discount"] = (best_value_metadata_df["DCFminusPrice"]) / (best_value_metadata_df["Price_BV"])
-best_value_metadata_df["yearly_discount"] = (best_value_metadata_df["yearHigh"] - best_value_metadata_df["price"]) / best_value_metadata_df["price"] 
-best_value_metadata_df["percToFloor"] = (best_value_metadata_df["price"] - best_value_metadata_df["yearLow"]) / best_value_metadata_df["price"] 
-best_value_metadata_df["InsiderPurchased/TransCount"] = best_value_metadata_df["InsiderPurchased"] / best_value_metadata_df["TransactionCount"]
-best_value_metadata_df['InsiderPurchased/TransCount'] = best_value_metadata_df['InsiderPurchased/TransCount'].replace(np.nan, 0)
+analyst_rating_metadata_df.rank_overall_x = analyst_rating_metadata_df.AnalystRating
 
-best_value_metadata_df["rank_1"] =  best_value_metadata_df["DCF_Discount"].rank(pct=True)
-best_value_metadata_df["rank_2"] =  best_value_metadata_df["yearly_discount"].rank(pct=True)
-best_value_metadata_df["rank_3"] =  best_value_metadata_df["InsiderPurchased/TransCount"].rank(pct=True)
-best_value_metadata_df["rank_overall_bv"] = ((0.333* best_value_metadata_df["rank_1"]) + (0.333* best_value_metadata_df["rank_2"]) 
-                                                    + (0.333* best_value_metadata_df["rank_3"]) )
+biggest_growers_metadata_df.rank_1 = biggest_growers_metadata_df.netIncomeGrowth2Yr.rank(pct=True)
+biggest_growers_metadata_df.rank_2 = biggest_growers_metadata_df.revGrowth1Yr.rank(pct=True)
+biggest_growers_metadata_df.rank_3 = biggest_growers_metadata_df.freeCashFlowGrowth.rank(pct=True)
+biggest_growers_metadata_df.rank_4 = biggest_growers_metadata_df.debt_repayment.rank(pct=True, ascending=False)
+biggest_growers_metadata_df.rank_overall_y = ((0.25*biggest_growers_metadata_df.rank_1) + (0.25*biggest_growers_metadata_df.rank_2) + 
+                                            (0.25*biggest_growers_metadata_df.rank_3) + (0.25*biggest_growers_metadata_df.rank_4))
 
+merged_df = analyst_rating_metadata_df.merge(biggest_growers_metadata_df)
 
-merged_df = healthiest_companies_metadata_df.merge(best_value_metadata_df)
-
-df = px.data.gapminder()
-
-fig = px.scatter(merged_df, x="rank_overall_bv", y="rank_overall_hc",
+fig = px.scatter(merged_df, x="rank_overall_x", y="rank_overall_y",
 	         size="marketCap", color="sector",
                  hover_name="country", log_x=True, size_max=60)
-#fig.show()
 fig.update_layout(
     width=700, height = 700
 )
+#fig.show()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 # TIME SERIES

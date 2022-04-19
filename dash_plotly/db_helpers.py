@@ -37,7 +37,7 @@ def fetch_analyst_rating():
 
 def fetch_biggest_growers():
     biggest_growers = table("biggest_growers", column("Symbol"), column("freeCashFlowGrowth"), column("revGrowth1Yr"),
-                            column("revGrowth1Yr"), column("netIncomeGrowth1Yr"), column("netIncomeGrowth2Yr"), column("debt_repayment"))
+                            column("revGrowth2Yr"), column("netIncomeGrowth1Yr"), column("netIncomeGrowth2Yr"), column("debt_repayment"), column('employeeGrowth'))
     biggest_growers_stmt = biggest_growers.select() #.where(analyst_rating.c.name == 'Bob')
     biggest_growers_df = pd.read_sql_query(biggest_growers_stmt, engine) 
     return biggest_growers_df
