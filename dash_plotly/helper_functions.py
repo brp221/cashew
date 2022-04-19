@@ -32,7 +32,7 @@ def health_preparer(df):
     df["rank_piotroski"] =  df["piotroskiScore"].rank(pct=True)
     df["rank_DE"] =  df["debtEquityRatio"].rank(ascending=False, pct=True)
     df["rank_overall_hc"] = ((0.25* df["rank_ROA"]) + (0.25* df["rank_ROE"]) + (0.25* df["rank_piotroski"]) + (0.25* df["rank_DE"]))
-    print("health_preparer : ", len(df))
+    # print("health_preparer : ", len(df))
     return df
 
 def discount_preparer(df):
@@ -46,7 +46,7 @@ def discount_preparer(df):
     df["rank_2_bv"] =  df["yearly_discount"].rank(pct=True)
     df["rank_3_bv"] =  df["InsiderPurchased/TransCount"].rank(pct=True)
     df["rank_overall_bv"] = ((0.40* df["rank_1_bv"]) + (0.40* df["rank_2_bv"]) + (0.20* df["rank_3_bv"]) )
-    print("discount_preparer : ", len(df))
+    # print("discount_preparer : ", len(df))
     return df
 
 def growers_preparer(df):
@@ -55,12 +55,12 @@ def growers_preparer(df):
     df["rank_3_bg"] = df.freeCashFlowGrowth.rank(pct=True)
     df["rank_4_bg"] = df.debt_repayment.rank(pct=True, ascending=False)
     df["rank_overall_bg"] = ((0.25*df.rank_1_bg) + (0.25*df.rank_2_bg) + (0.25*df.rank_3_bg) + (0.25*df.rank_4_bg))
-    print("growers_preparer : ", len(df))
+    # print("growers_preparer : ", len(df))
     return df
 
 def analyst_rating_preparer(df):
     df["rank_overall_ar"] = df.AnalystRating
-    print("analyst_rating_preparer : ", len(df))
+    # print("analyst_rating_preparer : ", len(df))
     return df
 
 

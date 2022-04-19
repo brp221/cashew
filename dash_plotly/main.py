@@ -11,7 +11,8 @@ from dash import html
 from dash import dcc
 import plotly.graph_objects as go
 import plotly.express as px
-from dash.dependencies import Input, Output  
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 import pandas as pd
 import numpy as np
@@ -21,7 +22,7 @@ sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 from helper_functions import  get_jsonparsed_data, health_preparer, discount_preparer, growers_preparer, analyst_rating_preparer
 from db_helpers import fetch_symbol_metadata, fetch_analyst_rating, fetch_biggest_growers, fetch_best_value, fetch_healthiest_companies
-from ui_styles import tabs_styles, dt_style, style_data_conditional
+from ui_styles import tabs_styles, dt_style, analyst_dt_style
 from callback_wrapper import candlestick_wrapper, scatter_wrapper, radar_wrapper, quarter_earnings_wrapper, annual_earnings_wrapper, insider_trade_wrapper
 
 
@@ -71,8 +72,8 @@ analyst_rating_chosen = ['Symbol', 'AnalystRating', 'AnalystResponses', 'RatingR
 
 dash_table1 = dash_table.DataTable(
     analyst_rating_df.to_dict('records'),
-    [{"name": i, "id": i} for i in analyst_rating_chosen],
-    page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True, editable=True, style_data_conditional=style_data_conditional)
+    [{"name": i, "id": i, 'hideable': True} for i in analyst_rating_chosen],
+    page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True, editable=True, style_data_conditional=analyst_dt_style)
 dash_table2 = dash_table.DataTable(
     healthiest_companies_metadata_df.to_dict('records'),
     [{"name": i, "id": i} for i in healthiest_chosen],
@@ -124,7 +125,12 @@ app.layout = html.Div(id = 'parent', children = [
                 ),
              html.Div([
                  html.Div([column_select1], style={'display': 'inline-block', 'marginLeft':200,'marginBottom':10}),
-                 html.Div([dash_table1], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
+                 html.Div([
+                     dash_table.DataTable(
+                     analyst_rating_df.to_dict('records'),
+                     [{"name": i, "id": i} for i in analyst_rating_chosen],
+                     page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True, editable=True, style_data_conditional=analyst_dt_style)
+                     ], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
                  html.Div([dash_table3], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':10}),
                  html.Div([column_select3], style={'display': 'inline-block', 'marginRight':20, 'marginBottom':10}),
              ]),
@@ -175,6 +181,48 @@ app.layout = html.Div(id = 'parent', children = [
    
 ])        
 
+
+@app.callback( 
+    Output("DT_analysts", "columns"),
+    [Input('AR_columns', 'value')],
+    [State('DT_analysts', 'columns')])
+def columns_table1(value, columns):
+    if value is None or columns is None:
+        raise PreventUpdate      
+    columns = [{"name": i, "id": i, 'hideable': False} for i in value]
+    return columns
+
+@app.callback( 
+    Output("DT_healthiest", "columns"),
+    [Input('HC_columns', 'value')],
+    [State('DT_healthiest', 'columns')])
+def columns_table2(value, columns):
+    if value is None or columns is None:
+        raise PreventUpdate      
+    columns = [{"name": i, "id": i, 'hideable': False} for i in value]
+    return columns
+
+@app.callback( 
+    Output("DT_discount", "columns"),
+    [Input('BV_columns', 'value')],
+    [State('DT_discount', 'columns')])
+def columns_table3(value, columns):
+    if value is None or columns is None:
+        raise PreventUpdate      
+    columns = [{"name": i, "id": i, 'hideable': False} for i in value]
+    return columns
+
+@app.callback( 
+    Output("DT_growers", "columns"),
+    [Input('BG_columns', 'value')],
+    [State('DT_growers', 'columns')])
+def columns_table4(value, columns):
+    if value is None or columns is None:
+        raise PreventUpdate      
+    columns = [{"name": i, "id": i, 'hideable': False} for i in value]
+    return columns
+
+
 @app.callback(
     Output("table2", "options"),
     Input("table1", "value"))
@@ -193,8 +241,8 @@ def update_table1(selected_table2):
     Input("table2", "value"),
     )
 def scatter_plot(table1, table2):
-    print("table1:"+table1)
-    print("table2:"+table2)
+    # print("table1:"+table1)
+    # print("table2:"+table2)
     df_x = pd.DataFrame()
     df_y = pd.DataFrame()
 
@@ -213,9 +261,6 @@ def scatter_plot(table1, table2):
     elif table1 == 'Healthiest' :
         df_x = health_preparer(healthiest_companies_metadata_df)
         df_x["rank_overall_x"] = df_x.rank_overall_hc
-        
-    else:
-        print("error occured")
     
     if table2 == 'Analyst Rating' :
         df_y = analyst_rating_preparer(analyst_rating_metadata_df)
@@ -233,12 +278,6 @@ def scatter_plot(table1, table2):
         df_y = health_preparer(healthiest_companies_metadata_df)
         df_y["rank_overall_y"] = df_y.rank_overall_hc
         
-        
-    else:
-        print("error occured")
-        
-    print("df_y : ", len(df_y))
-    print("df_x : ", len(df_x))
     return scatter_wrapper(df_y,df_x)
 
 

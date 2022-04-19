@@ -41,7 +41,7 @@ dt_style={
     'lineHeight': '15px'
 }
 
-style_data_conditional=[
+analyst_dt_style=[
         {
             'if': {
                 'column_id': 'Symbol'
@@ -52,10 +52,18 @@ style_data_conditional=[
         },
         {
             'if': {
+                'row_index': 'even',  # number | 'odd' | 'even'
+                'column_id': 'AnalystRating'
+            },
+            'backgroundColor': '#18ACF0',
+            'color': 'white'
+        },
+        {
+            'if': {
                 'filter_query': '{AnalystRating} > 4.10',
                 'column_id': 'AnalystRating'
             },
-            'textDecoration': 'underline'
+            'color': 'green'
         }
     ]
 
