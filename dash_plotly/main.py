@@ -22,7 +22,7 @@ sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 from helper_functions import  get_jsonparsed_data, health_preparer, discount_preparer, growers_preparer, analyst_rating_preparer
 from db_helpers import fetch_symbol_metadata, fetch_analyst_rating, fetch_biggest_growers, fetch_best_value, fetch_healthiest_companies
-from ui_styles import tabs_styles, dt_style, analyst_dt_style
+from ui_styles import dt_style, analyst_dt_style, tab_style, main_tabs_styles, tab_selected_style, discount_dt_style, healthiest_dt_style, growers_dt_style
 from callback_wrapper import candlestick_wrapper, scatter_wrapper, radar_wrapper, quarter_earnings_wrapper, annual_earnings_wrapper, insider_trade_wrapper
 
 
@@ -71,39 +71,49 @@ analyst_rating_all = ['Symbol', 'AnalystRating', 'AnalystResponses', 'RatingRank
 analyst_rating_chosen = ['Symbol', 'AnalystRating', 'AnalystResponses', 'RatingRank','ResponsesRank', 'AverageRank']
 
 dash_table1 = dash_table.DataTable(
-    analyst_rating_df.to_dict('records'),
-    [{"name": i, "id": i, 'hideable': True} for i in analyst_rating_chosen],
+    analyst_rating_metadata_df.to_dict('records'),
+    [{"name": i, "id": i} for i in analyst_rating_chosen],
     page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True, editable=True, style_data_conditional=analyst_dt_style)
 dash_table2 = dash_table.DataTable(
     healthiest_companies_metadata_df.to_dict('records'),
     [{"name": i, "id": i} for i in healthiest_chosen],
-    page_size=12, id = "DT_healthiest", style_data = dt_style, fill_width=True)
+    page_size=12, id = "DT_healthiest", style_data = dt_style, fill_width=True, editable=True,style_data_conditional=healthiest_dt_style)
 dash_table3 = dash_table.DataTable(
     best_value_df.to_dict('records'),
     [{"name": i, "id": i} for i in best_value_chosen],
-    page_size=12, id = "DT_discount",style_data = dt_style,fill_width=True )
+    page_size=12, id = "DT_discount",style_data = dt_style,fill_width=True, editable=True, style_data_conditional=discount_dt_style )
 dash_table4 = dash_table.DataTable(
     biggest_growers_df.to_dict('records'),
     [{"name": i, "id": i} for i in biggest_growers_chosen],
-    page_size=12, id = "DT_growers",style_data = dt_style, fill_width=True )
+    page_size=12, id = "DT_growers",style_data = dt_style, fill_width=True, editable=True, style_data_conditional= growers_dt_style )
 
-column_select1 = dcc.Dropdown( list(analyst_rating_df.columns), list(analyst_rating_df.columns),
+column_select1 = dcc.Dropdown( analyst_rating_all, analyst_rating_chosen,
     multi=True, id = 'AR_columns', style={'display': 'inline-block', 'marginRight':10,'marginBottom':110, 'width':120, 'height':300 }
     )
-column_select2 = dcc.Dropdown( list(healthiest_companies_metadata_df.columns), list(healthiest_companies_metadata_df.columns),
+column_select2 = dcc.Dropdown( healthiest_all, healthiest_chosen,
     multi=True, id = 'HC_columns', style={'display': 'inline-block', 'marginBottom':70, 'marginTop':10,'marginRight':10, 'width':180, 'height':350 }
     )
-column_select3 = dcc.Dropdown( list(best_value_df.columns), list(best_value_df.columns),
+column_select3 = dcc.Dropdown( best_value_all, best_value_chosen,
     multi=True, id = 'BV_columns', style={'display': 'inline-block', 'marginBottom':110, 'marginLeft':10, 'width':180, 'height':300 }
     )
-column_select4 = dcc.Dropdown( list(biggest_growers_df.columns), list(biggest_growers_df.columns),
+column_select4 = dcc.Dropdown( biggest_growers_all, biggest_growers_chosen,
     multi=True, id = 'BG_columns', style={'display': 'inline-block', 'marginRight':30,'marginBottom':110, 'width':120, 'height':350 }
     )
 
 
-table_select_1 = dcc.Dropdown(tables,'Analyst Rating' , id = 'table1',style={'marginBottom':80, 'marginRight':200, 'width':200, 'height':60})
-table_select_2 = dcc.Dropdown(tables,'Best Value'  , id = 'table2', style={'marginBottom':300, 'marginRight':200, 'width':200, 'height':60})
+# table_select_1 = dcc.Dropdown(tables,'Analyst Rating' , id = 'table1',style={'marginBottom':80, 'marginRight':200, 'width':200, 'height':60})
+# table_select_2 = dcc.Dropdown(tables,'Best Value'  , id = 'table2', style={'marginBottom':300, 'marginRight':200, 'width':200, 'height':60})
 
+analyst_checklist = dcc.Checklist(analyst_rating_metadata_df.columns, analyst_rating_chosen, id = "analystChecklist", 
+                                  labelStyle={'display': 'block'})
+haelthiest_checklist = dcc.Checklist(healthiest_companies_metadata_df.columns, healthiest_chosen, id = "healthiestChecklist", 
+                                  labelStyle={'display': 'block'},style={"height":600, "width":200, 'marginLeft':10, 'marginRight':10})
+discount_checklist = dcc.Checklist(best_value_df.columns, best_value_chosen, id = "discountChecklist", 
+                                  labelStyle={'display': 'block'},style={"height":600, "width":200, 'marginLeft':10, 'marginRight':10})
+growers_checklist = dcc.Checklist(biggest_growers_df.columns, biggest_growers_chosen, id = "growersChecklist", 
+                                  labelStyle={'display': 'block'},style={"height":600, "width":200, 'marginLeft':10, 'marginRight':10})
+
+     
 
 stockSymbol= "NVDA"
 url = ("https://financialmodelingprep.com/api/v4/insider-trading?symbol="+stockSymbol+"&page=0&apikey=ce687b3fe0554890e65d6a5e48f601f9")
@@ -124,23 +134,18 @@ app.layout = html.Div(id = 'parent', children = [
                 multi=True, id = 'sectorSelect', style={'display': 'inline-block', 'marginLeft':100,'marginBottom':8, 'marginTop':8,'marginRight':100, 'width':1450, 'height':40 }
                 ),
              html.Div([
-                 html.Div([column_select1], style={'display': 'inline-block', 'marginLeft':200,'marginBottom':10}),
-                 html.Div([
-                     dash_table.DataTable(
-                     analyst_rating_df.to_dict('records'),
-                     [{"name": i, "id": i} for i in analyst_rating_chosen],
-                     page_size=12, id = "DT_analysts", style_data = dt_style, fill_width=True, editable=True, style_data_conditional=analyst_dt_style)
-                     ], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
-                 html.Div([dash_table3], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':10}),
-                 html.Div([column_select3], style={'display': 'inline-block', 'marginRight':20, 'marginBottom':10}),
+                 html.Div([analyst_checklist], style={'display': 'inline-block',"height":600, "width":200, 'marginLeft':20, 'marginRight':10,'marginBottom':200}),
+                 html.Div([dash_table1],       style={'display': 'inline-block', 'marginLeft':10,'marginRight':10, 'marginBottom':2}),
+                 html.Div([dash_table3],       style={'display': 'inline-block', 'marginLeft':20,'marginBottom':2}),
+                 html.Div([discount_checklist],style={'display': 'inline-block', 'marginRight':20, 'marginBottom':200}),
              ]),
              html.Div([
-                 html.Div([column_select4], style={'display': 'inline-block', 'marginLeft':200,'marginBottom':10}),
-                 html.Div([dash_table4], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
-                 html.Div([dash_table2], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':10}),
-                 html.Div([column_select2], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
+                 html.Div([growers_checklist], style={'display': 'inline-block', 'marginLeft':20, 'marginBottom':2}),
+                 html.Div([dash_table4], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':2}),
+                 html.Div([dash_table2], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':2}),
+                 html.Div([haelthiest_checklist], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
              ])
-        ]),
+        ], style = tab_style, selected_style = tab_selected_style),
         dcc.Tab(label='RESEARCH', children=[
                 html.Div([
                     html.Div([dcc.Graph(id="scatterPlot")], style={'display': 'inline-block'}),
@@ -149,7 +154,7 @@ app.layout = html.Div(id = 'parent', children = [
                         dcc.RadioItems(id='table2',value='Best Value')
                     ], style={'display': 'inline-block', 'marginLeft':60}),
                 ]),
-            ]),
+            ], style = tab_style, selected_style = tab_selected_style),
         dcc.Tab(label='ANALYSIS', children=[
             html.Div([ 
                 html.Div([dcc.Tabs([
@@ -175,16 +180,25 @@ app.layout = html.Div(id = 'parent', children = [
                 html.Div([dcc.Slider(0, 20, 5,value=10,id='transactionCount')], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':40, 'width':250}),        
                 html.Div([html.H4('InsideTrading'),dcc.Graph(id="insideTradingBar")], style={'display': 'inline-block','width':250}),
             ])
-        ]),
-        dcc.Tab(label='CALENDAR', children=[]),
-    ])
+        ], style = tab_style, selected_style = tab_selected_style),
+        dcc.Tab(label='CALENDAR', children=[], style = tab_style, selected_style = tab_selected_style),
+    ],style=main_tabs_styles )
    
 ])        
+@app.callback(
+    Output("DT_analysts", "data"), 
+    Input("sectorSelect", "value"))
+def table_update(sectorSelect):
+    # df = analyst_rating_metadata_df[analyst_rating_metadata_df.sector.isin(sectorSelect)]
+    print(sectorSelect )
+    return analyst_rating_metadata_df[analyst_rating_metadata_df.sector.isin(sectorSelect)].to_dict('records')
 
+# Output("DT_healthiest", "data"), Output("DT_discount", "data"), Output("DT_growers", "data")
+# [State('DT_healthiest', 'data')],[State('DT_discount', 'data')], [State('DT_growers', 'data')]
 
 @app.callback( 
     Output("DT_analysts", "columns"),
-    [Input('AR_columns', 'value')],
+    [Input('analystChecklist', 'value')],
     [State('DT_analysts', 'columns')])
 def columns_table1(value, columns):
     if value is None or columns is None:
@@ -194,7 +208,7 @@ def columns_table1(value, columns):
 
 @app.callback( 
     Output("DT_healthiest", "columns"),
-    [Input('HC_columns', 'value')],
+    [Input('healthiestChecklist', 'value')],
     [State('DT_healthiest', 'columns')])
 def columns_table2(value, columns):
     if value is None or columns is None:
@@ -204,7 +218,7 @@ def columns_table2(value, columns):
 
 @app.callback( 
     Output("DT_discount", "columns"),
-    [Input('BV_columns', 'value')],
+    [Input('discountChecklist', 'value')],
     [State('DT_discount', 'columns')])
 def columns_table3(value, columns):
     if value is None or columns is None:
@@ -214,7 +228,7 @@ def columns_table3(value, columns):
 
 @app.callback( 
     Output("DT_growers", "columns"),
-    [Input('BG_columns', 'value')],
+    [Input('growersChecklist', 'value')],
     [State('DT_growers', 'columns')])
 def columns_table4(value, columns):
     if value is None or columns is None:

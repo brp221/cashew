@@ -6,33 +6,27 @@ Created on Sun Apr 17 21:44:08 2022
 @author: bratislavpetkovic
 """
 
-tabs_styles = {'zIndex': 99, 'display': 'inlineBlock', 'height': '4vh', 'width': '12vw',
-               'position': 'fixed', "background": "#323130", 'top': '12.5vh', 'left': '7.5vw',
-               'border': 'grey', 'border-radius': '4px'}
+main_tabs_styles = {
+    'height': 50,
+    'width': 1400, 
+    'marginLeft':200
+}
+
+tab_style = {
+    'borderBottom': '1px solid #d6d6d6',
+    'padding': '6px',
+    'fontWeight': 'bold', 
+    'backgroundColor' : '#7851a9',#7851a9
+    'color' : 'white'
+}
+
 tab_selected_style = {
-    "background": "blue",
-    'text-transform': 'uppercase',
-    'color': 'red',
-    'font-size': '11px',
-    'font-weight': 600,
-    'align-items': 'center',
-    'justify-content': 'center',
-    'width': 450
-
-}
-
-main_tabs_style = {
-    "background": "grey",
-    'text-transform': 'uppercase',
+    'borderTop': '1px solid #d6d6d6',
+    'borderBottom': '1px solid #d6d6d6',
+    'backgroundColor': '#5e8078',#5e8078
     'color': 'white',
-    'font-size': '11px',
-    'font-weight': 600,
-    'align-items': 'center',
-    'justify-content': 'center',
-    'border-radius': '4px',
-    'padding':'6px'
+    'padding': '6px'
 }
-
 
 dt_style={
     'whiteSpace': 'normal',
@@ -46,27 +40,142 @@ analyst_dt_style=[
             'if': {
                 'column_id': 'Symbol'
             },
-            'color': '#18ACF0',
-            'backgroundColor': '#F0880C',
             'fontWeight': 'bold'
         },
         {
             'if': {
                 'row_index': 'even',  # number | 'odd' | 'even'
-                'column_id': 'AnalystRating'
+                'column_id': ['Symbol','AnalystRating','AnalystResponses', 'RatingRank', 'ResponsesRank', 'AverageRank', 'companyName', 'sector', 'industry', 'country', 'marketCap']
             },
-            'backgroundColor': '#18ACF0',
-            'color': 'white'
+            'backgroundColor': '#d2e5e5',
+            'color': 'black'
         },
         {
             'if': {
                 'filter_query': '{AnalystRating} > 4.10',
                 'column_id': 'AnalystRating'
             },
-            'color': 'green'
+            'color': 'green', 
+            'fontWeight': 'bold',
+        },
+        {
+            'if': {
+                'filter_query': '{AnalystRating} < 3.5',
+                'column_id': 'AnalystRating'
+            },
+            'fontWeight': 'bold',
+            'color': 'red'
+        },
+        {
+            'if': {
+                'filter_query': '{AnalystResponses} > 25',
+                'column_id': 'AnalystResponses'
+            },
+            'color': 'green', 
+            'fontWeight': 'bold',
+        },
+        {
+            'if': {
+                'filter_query': '{AnalystResponses} < 14',
+                'column_id': 'AnalystResponses'
+            },
+            'fontWeight': 'bold',
+            'color': 'red'
         }
+        
+        
     ]
 
+discount_dt_style=[
+        {
+            'if': {
+                'column_id': 'Symbol'
+            },
+            'fontWeight': 'bold'
+        },
+        {
+            'if': {
+                'row_index': 'odd',  # number | 'odd' | 'even'
+                'column_id': ['Symbol','DCFminusPrice','grahamNumber', 'InsiderPurchased', 'TransactionCount', 'Price_BV', 'yearHigh', 'yearLow', 'DCF', ]
+            },
+            'backgroundColor': '#d2e5e5',
+            'color': 'black'
+        }
+        #{
+            # 'if': {
+            #     'filter_query': '({DCFMinusPrice}/{Price_BV}) > 0.10',
+            #     'column_id': 'DCFMinusPrice'
+            # },
+        #     'if': {
+        #         'filter_query': '{DCFMinusPrice}' > "10",
+        #         'column_id': 'DCFMinusPrice'
+        #     },
+        #     'color': 'green', 
+        #     'fontWeight': 'bold',
+        # },
+        # {
+        #     'if': {
+        #         'filter_query': '{DCFMinusPrice}' < "-10",
+        #         'column_id': 'DCFMinusPrice'
+        #     },
+        #     'color': 'red', 
+        #     'fontWeight': 'bold',
+        # },
+
+        
+    ]
+
+growers_dt_style=[
+        {
+            'if': {
+                'column_id': 'Symbol'
+            },
+            'fontWeight': 'bold'
+        },
+        {
+            'if': {
+                'row_index': 'even',  # number | 'odd' | 'even'
+                'column_id': ['freeCashFlowGrowth','revgrowth1Yr','revgrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ]
+            },
+            'backgroundColor': '#d2e5e5',
+            'color': 'black'
+        }      
+    ]
+healthiest_dt_style=[
+        {
+            'if': {
+                'column_id': 'Symbol'
+            },
+            'fontWeight': 'bold'
+        },
+        {
+            'if': {
+                'row_index': 'odd',  # number | 'odd' | 'even'
+                'column_id': ['ROA','ROE','currentRatio','debtEquityRatio', 'ebitda','piotroskiScore', 'netProfitMargin', 'priceToOperatingCashFlowRatio', 'companyName', 'sector', 'industry', 'marketCap' ]
+            },
+            'backgroundColor': '#d2e5e5',
+            'color': 'black'
+        }      
+    ]
+
+
+
+        # {
+        #     'if': {
+        #         'filter_query': '{grahamMinusPrice}/{Price_BV} > 0.10',
+        #         'column_id': ['grahamMinusPrice', 'grahamNumber', 'Price_BV']
+        #     },
+        #     'color': 'green', 
+        #     'fontWeight': 'bold',
+        # },
+        # {
+        #     'if': {
+        #         'filter_query': '{grahamMinusPrice}/{Price_BV} < -0.10',
+        #         'column_id': ['grahamMinusPrice', 'grahamNumber', 'Price_BV']
+        #     },
+        #     'color': 'red', 
+        #     'fontWeight': 'bold',
+        # },
 # style_data_conditional=[
 #         {
 #             'if': {

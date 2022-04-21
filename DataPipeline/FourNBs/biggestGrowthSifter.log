@@ -7237,3 +7237,41 @@ Error in curl::curl_fetch_memory(url, handle = handle) :
   Timeout was reached: [financialmodelingprep.com] Resolving timed out after 10018 milliseconds
 Calls: fetchGrowth ... request_fetch -> request_fetch.write_memory -> <Anonymous>
 Execution halted
+Warning message:
+package 'tidyr' was built under R version 4.0.5 
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+package 'dplyr' was built under R version 4.0.5 
+Loading required package: httr
+[1] "KICK-OFF:  2022-04-20 09:04:01"
+Your original .Renviron will be backed up and stored in your R HOME directory if needed.
+Your API key has been stored in your .Renviron file and can be accessed by `Sys.getenv('FMP_API_KEY')`
+To use now, restart R or run `readRenviron('~/.Renviron')`
+[1] "ce687b3fe0554890e65d6a5e48f601f9"
+[1] "AAPL"
+[1] "MSFT"
+[1] "GOOG"
+[1] "GOOGL"
+[1] "AMZN"
+[1] "TSLA"
+[1] "BRK-A"
+[1] "BRK-B"
+[1] "FB"
+[1] "NVDA"
+Error: API request failed for failed and returned the following information.
+request_url: https://financialmodelingprep.com/api/v3/cash-flow-statement/TSM?apikey=ce687b3fe0554890e65d6a5e48f601f9
+message: Client error: (429) Too Many Requests (RFC 6585)
+category: Client error
+reason: Too Many Requests (RFC 6585)
+In addition: There were 13 warnings (use warnings() to see them)
+Execution halted
