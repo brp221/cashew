@@ -24,7 +24,7 @@ def candlestick_wrapper(symbol):
                     low=priceDF['low'],
                     close=priceDF['close'])])
     fig.update_layout(
-        width=800, height = 600
+        width=700, height = 520
     )
     return fig
 
@@ -45,23 +45,34 @@ def scatter_wrapper( table1, table2):
     #fig.show()
     return fig
     
-def radar_wrapper(symbol):
-    print("Radar wrapper:"+symbol)
+def radar_wrapper(symbol, peerSymbol):
+    print("Radar symbol:"+symbol)
+    print("Radar peerSymbol:"+peerSymbol)
     outlookURL = ("https://financialmodelingprep.com/api/v4/company-outlook?symbol="+symbol+"&apikey=ce687b3fe0554890e65d6a5e48f601f9")
     companyOutlook  =  pd.DataFrame.from_dict(get_jsonparsed_data(outlookURL)["rating"])
-    # outlookURL2 = ("https://financialmodelingprep.com/api/v4/company-outlook?symbol=MSFT&apikey=ce687b3fe0554890e65d6a5e48f601f9")
-    # peerOutlook  =  pd.DataFrame.from_dict(get_jsonparsed_data(outlookURL2)["rating"])
+    outlookURL2 = ("https://financialmodelingprep.com/api/v4/company-outlook?symbol="+peerSymbol+"&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+    peerOutlook  =  pd.DataFrame.from_dict(get_jsonparsed_data(outlookURL2)["rating"])
     x =  [companyOutlook.ratingDetailsDCFScore[0], companyOutlook.ratingDetailsROEScore[0], companyOutlook.ratingDetailsROAScore[0], 
                    companyOutlook.ratingDetailsDEScore[0], companyOutlook.ratingDetailsPEScore[0], companyOutlook.ratingDetailsPBScore[0]]
-    # x2 =  [peerOutlook.ratingDetailsDCFScore[0], peerOutlook.ratingDetailsROEScore[0], peerOutlook.ratingDetailsROAScore[0], 
-    #                peerOutlook.ratingDetailsDEScore[0], peerOutlook.ratingDetailsPEScore[0], peerOutlook.ratingDetailsPBScore[0]]
+    x2 =  [peerOutlook.ratingDetailsDCFScore[0], peerOutlook.ratingDetailsROEScore[0], peerOutlook.ratingDetailsROAScore[0], 
+                    peerOutlook.ratingDetailsDEScore[0], peerOutlook.ratingDetailsPEScore[0], peerOutlook.ratingDetailsPBScore[0]]
     categories = ["DCF", "ROE", "ROA", "D/E", "P/E", "P/B"]
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(
           r=x,
           theta=categories,
+          line_color = '#7851a9',
+          marker_color = "#7851a9", 
           fill='toself',
-          name='Product A'
+          name=symbol
+    ))
+    fig.add_trace(go.Scatterpolar(
+          r=x2,
+          theta=categories,
+          line_color = 'black',
+          marker_color="#5e8078",
+          fill='toself',
+          name=peerSymbol
     ))
     fig.update_layout(
       polar=dict(
@@ -69,7 +80,7 @@ def radar_wrapper(symbol):
           visible=True,
           range=[0, 5]
         )),
-      showlegend=False, width=400,height=400
+      showlegend=True, width=300,height=300
     )
 
     return fig
@@ -79,19 +90,24 @@ def quarter_earnings_wrapper(symbol):
     # TIME SERIES
     incomeStatURLquarter = ("https://financialmodelingprep.com/api/v3/income-statement/"+symbol+"?period=quarter&limit=16&apikey=ce687b3fe0554890e65d6a5e48f601f9")
     incomeStatDFQuart = pd.DataFrame.from_dict(get_jsonparsed_data(incomeStatURLquarter))
-
-    incomeStatDFQuart.index = pd.to_datetime(incomeStatDFQuart.date)
-
-    # df = px.data.stocks()
-    fig = px.line(incomeStatDFQuart, x="date", y=['revenue','ebitda' ,'netIncome'],
-                  hover_data={"date": "|%B %d, %Y"},
-                  title='custom tick labels')
-    fig.update_xaxes(
-        dtick="M1",
-        tickformat="%b\n%Y") 
-    #fig.show()
-    return fig
     
+    x1 = incomeStatDFQuart.date
+    y1 = incomeStatDFQuart.netIncome
+    
+    x2 = incomeStatDFQuart.date
+    y2 = incomeStatDFQuart.revenue
+    
+       
+    # Create traces
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x1, y=y1,
+                        mode='lines+markers',
+                        name='Revenue'))
+    fig.add_trace(go.Scatter(x=x2, y=y2,
+                         mode='lines+markers',
+                         name='NetIncome'))
+    fig.update_layout( width=450,height=400)
+    return fig
     
 def annual_earnings_wrapper(symbol):
     print("Annual Earnings wrapper:"+symbol)
@@ -129,8 +145,7 @@ def annual_earnings_wrapper(symbol):
         marker_color='purple'
     ))
     
-    # Here we modify the tickangle of the xaxis, resulting in rotated labels.
-    fig.update_layout(barmode='group', xaxis_tickangle=-45, width=450,height=600)
+    fig.update_layout(barmode='group', xaxis_tickangle=-45, width=450,height=400)
     #fig.show()
     return fig
     
@@ -151,4 +166,51 @@ def insider_trade_wrapper(symbol):
     return fig
     
     
+def growth_metric_wrapper(symbol):
+    finGrowthQuartURL = ("https://financialmodelingprep.com/api/v3/financial-growth/"+symbol+"?period=quarter&limit=60&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+    finGrowthQuart = pd.DataFrame.from_dict(get_jsonparsed_data(finGrowthQuartURL))
+    x = finGrowthQuart.date
+    revGrowth = finGrowthQuart.revenueGrowth
+    netIncGrowth = finGrowthQuart.netIncomeGrowth
+
+    # Create traces
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x, y=revGrowth,
+                        mode='lines+markers',
+                        name='RevenueGrowth'))
+    fig.add_trace(go.Scatter(x=x, y=netIncGrowth,
+                         mode='lines+markers',
+                         name='NetIncomeGrowth'))
+    fig.update_layout( width=650,height=450)
+
+    return fig
+
+def growth_future_wrapper(symbol):
+    #/api/v3/analyst-estimates/AAPL?period=quarter&limit=30
+    #/api/v3/analyst-estimates/"+symbol+"?limit=4&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+    earningsEstimatesURL = ("https://financialmodelingprep.com/api/v3/analyst-estimates/"+symbol+"?period=quarter&limit=16&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+    estimatedEarnings= pd.DataFrame.from_dict(get_jsonparsed_data(earningsEstimatesURL))
+    actualEarningsURL = ("https://financialmodelingprep.com/api/v3/income-statement/"+symbol+"?period=quarter&limit=16&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+    actualEarnings= pd.DataFrame.from_dict(get_jsonparsed_data(actualEarningsURL))
     
+    x1 = estimatedEarnings.date
+    y1 = estimatedEarnings.estimatedRevenueAvg.astype(int)
+    
+    x2 = actualEarnings.date
+    y2 = actualEarnings.revenue
+    
+    
+    # Create traces
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=x1, y=y1,
+                        mode='lines+markers',
+                        name='RevenueEstimate'))
+    fig.add_trace(go.Scatter(x=x2, y=y2,
+                         mode='lines+markers',
+                         name='RevenueActual'))
+    fig.update_layout( width=650,height=450)
+
+    return fig
+    
+# def debt_wrapper(symbol):
+#     #debt paid off yearly vs increasing debt. 

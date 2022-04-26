@@ -11,6 +11,10 @@ main_tabs_styles = {
     'width': 1400, 
     'marginLeft':200
 }
+earnings_tabs_styles = {
+    'height': 20,
+    'width': 300, 
+}
 
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
@@ -157,7 +161,19 @@ healthiest_dt_style=[
             'color': 'black'
         }      
     ]
-
+# IMPORTANT AFFFFFF :::: 4 TABLEZ STRUCTURE 
+# html.Div([
+#     html.Div([analyst_checklist], style={'display': 'inline-block',"height":600, "width":200, 'marginLeft':20, 'marginRight':10,'marginBottom':200}),
+#     html.Div([dash_table1],       style={'display': 'inline-block', 'marginLeft':10,'marginRight':10, 'marginBottom':2}),
+#     html.Div([dash_table3],       style={'display': 'inline-block', 'marginLeft':20,'marginBottom':2}),
+#     html.Div([discount_checklist],style={'display': 'inline-block', 'marginRight':20, 'marginBottom':200}),
+# ]),
+# html.Div([
+#     html.Div([growers_checklist], style={'display': 'inline-block', 'marginLeft':20, 'marginBottom':2}),
+#     html.Div([dash_table4], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':2}),
+#     html.Div([dash_table2], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':2}),
+#     html.Div([haelthiest_checklist], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
+# ])
 
 
         # {

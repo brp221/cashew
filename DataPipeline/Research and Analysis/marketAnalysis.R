@@ -252,9 +252,15 @@ res <-quantile(debt_repayment, probs = c(.02,0.1,0.25,0.5,0.75,0.9,.98), na.rm=T
 hist(debt_repayment, breaks=50)
 
 #--------------------------------------------------------------------------------------------------------------------
-
-
-
+# GROWTH 
+# Basic line plot with points
+ggplot(data=finGrowthQuart, aes(x=date, y=revenueGrowth, group=1)) +
+  geom_line(linetype = "dashed")+
+  geom_point()
+# Change the line type    
+ggplot(data=finGrowthQuart, aes(x=date, y=netIncomeGrowth, group=1)) +
+  geom_line()+
+  geom_point()
 
 
 

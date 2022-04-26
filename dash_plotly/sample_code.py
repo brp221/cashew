@@ -71,18 +71,27 @@ fig.update_layout(
 # TIME SERIES
 incomeStatURLquarter = ("https://financialmodelingprep.com/api/v3/income-statement/NVDA?period=quarter&limit=16&apikey=ce687b3fe0554890e65d6a5e48f601f9")
 incomeStatDFQuart = pd.DataFrame.from_dict(get_jsonparsed_data(incomeStatURLquarter))
-
 incomeStatDFQuart.index = pd.to_datetime(incomeStatDFQuart.date)
 
-df = px.data.stocks()
-fig = px.line(incomeStatDFQuart, x="date", y=['revenue','ebitda' ,'netIncome'],
-              hover_data={"date": "|%B %d, %Y"},
-              title='custom tick labels')
-fig.update_xaxes(
-    dtick="M1",
-    tickformat="%b\n%Y")
-fig.show()
 
+# https://financialmodelingprep.com/api/v3/financial-growth/NVDA?period=quarter&limit=80&apikey=ce687b3fe0554890e65d6a5e48f601f9
+# https://financialmodelingprep.com/api/v3/financial-growth/NVDA?period=quarter&limit=80&apikey=ce687b3fe0554890e65d6a5e48f601f9
+finGrowthQuartURL = ("https://financialmodelingprep.com/api/v3/financial-growth/NVDA?period=quarter&limit=80&apikey=ce687b3fe0554890e65d6a5e48f601f9")
+finGrowthQuart = pd.DataFrame.from_dict(get_jsonparsed_data(finGrowthQuartURL))
+
+x = finGrowthQuart.date
+revGrowth = finGrowthQuart.revenueGrowth
+netIncGrowth = finGrowthQuart.netIncomeGrowth
+
+# Create traces
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=x, y=revGrowth,
+                    mode='lines+markers',
+                    name='lines+markers'))
+fig.add_trace(go.Scatter(x=x, y=netIncGrowth,
+                    mode='markers', name='markers'))
+
+fig.show()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 

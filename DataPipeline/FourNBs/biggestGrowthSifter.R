@@ -53,13 +53,16 @@ fetchGrowth <- function(inputDF){
   for (i in (1:nrow(inputDF))) {
   #for (i in (1:15)) {
     #fetch analyst estimates
-    analystEstimatesURL <- paste("https://financialmodelingprep.com/api/v3/analyst-estimates/",inputDF$Symbol[[i]],"?limit=3&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
+    analystEstimatesURL <- paste("https://financialmodelingprep.com/api/v3/analyst-estimates/",
+                                 inputDF$Symbol[[i]],"?limit=3&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
     analystEstimates <- dplyr::bind_rows(makeReqParseRes(analystEstimatesURL))
     #fetch current growth 
-    financialStatementsGrowthURL <- paste("https://financialmodelingprep.com/api/v3/financial-growth/",inputDF$Symbol[[i]],"?apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
+    financialStatementsGrowthURL <- paste("https://financialmodelingprep.com/api/v3/financial-growth/",
+                                          inputDF$Symbol[[i]],"?apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
     finGrowth <- dplyr::bind_rows(makeReqParseRes(financialStatementsGrowthURL))
     #fetch income statements 
-    incomeStatementsURL <- paste("https://financialmodelingprep.com/api/v3/income-statement/",inputDF$Symbol[[i]],"?limit=5&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
+    incomeStatementsURL <- paste("https://financialmodelingprep.com/api/v3/income-statement/",
+                                 inputDF$Symbol[[i]],"?limit=5&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
     incomeStatements<- dplyr::bind_rows(makeReqParseRes(incomeStatementsURL))
     #fetch debt repayment + free cash flow(rolling)
     finStatements<-fmp_cash_flow(inputDF$Symbol[[i]])[1:3,]
@@ -86,6 +89,13 @@ fetchGrowth <- function(inputDF){
     netIncomeGrowth2Yr <- (analystEstimates$estimatedNetIncomeAvg[[1]] - incomeStatements$netIncome[[1]])/incomeStatements$netIncome[[1]]
     netIncomeGrowth1Yr <- (analystEstimates$estimatedNetIncomeAvg[[2]] - incomeStatements$netIncome[[1]])/incomeStatements$netIncome[[1]]
     freeCashFlowGrowth <- finGrowth$freeCashFlowGrowth[1]
+    print(paste("revGrowth2Yr: ", revGrowth2Yr))
+    print(paste("revGrowth1Yr: ", revGrowth1Yr))
+    print(paste("netIncomeGrowth2Yr: ", netIncomeGrowth2Yr))
+    print(paste("netIncomeGrowth1Yr: ", netIncomeGrowth1Yr))
+    print(paste("freeCashFlowGrowth: ", finGrowth$freeCashFlowGrowth[1]))
+    print(paste("debt_repayment[1]: ", finStatements$debt_repayment[1]))
+    
     #employeeGrowth3Year <- (employeeDF$employeeCount[[1]]  - employeeDF$employeeCount[[3]])/employeeDF$employeeCount[[3]]
     #APPEND TO DB 
     returnDF[i,] <- c(inputDF$Symbol[[i]],
@@ -129,6 +139,26 @@ success <- write_xlsx(biggestGrowers,"DataPipeline/TABLES/BiggestGrowers.xlsx")
 print(paste("FINAL WHISTLE: ", Sys.time())) 
 
 
+
+# MESS AROUND 
+analystEstimatesURL <- paste("https://financialmodelingprep.com/api/v3/analyst-estimates/BABA?limit=3&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
+analystEstimates <- dplyr::bind_rows(makeReqParseRes(analystEstimatesURL))
+
+#IDEAS ESTIMATED Y FOR THE NEXT 2 YEARS, ESTIMATED Y FOR THE PREVIOUS 2 YEARS, PLUS ACTUAL(INCLUDE LOW, MEDIUM,HIGH ESTIMATES)
+# HAVE THE Y AXIS BE DYNAMIC. LABEL THE GROWTH. KEY HERE IS TO HAVE JUST THE RIGHT AMOUNT OF SAUCE ON THE GRAPH 
+
+#MAYBE SEPARATE MAYBE INCORPORATED 
+# GIVE USER ABILITY TO TRACK ROA, ROE, D/E, ... OVER TIME FOR THE COMPANY ( LINE GRAPH VS BAR GRAPH ?)
+
+# /api/v3/financial-growth/AAPL?period=quarter&limit=80
+finGrowthQuartURL<- paste("https://financialmodelingprep.com/api/v3/financial-growth/NVDA?period=quarter&limit=80&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
+finGrowthQuart <- dplyr::bind_rows(makeReqParseRes(fiGrowthQuartURL))
+
+
+# /api/v3/financial-growth/AAPL?period=quarter&limit=80
+analystEstimates <- dplyr::bind_rows(makeReqParseRes(analystEstimatesURL))
+finGrowthQuartURL<- paste("https://financialmodelingprep.com/api/v3/financial-growth/NVDA?period=quarter&limit=80&apikey=ce687b3fe0554890e65d6a5e48f601f9", sep = "")
+finGrowthQuart <- dplyr::bind_rows(makeReqParseRes(fiGrowthQuartURL))
 
 
 
