@@ -3,3 +3,7 @@ REFERENCES
 (1) DT HEAT MAP : https://dash.plotly.com/datatable/conditional-formatting
 
 (2) STYLE : https://towardsdatascience.com/create-a-professional-dasbhoard-with-dash-and-css-bootstrap-e1829e238fc5
+            https://dash-bootstrap-components.opensource.faculty.ai/docs/components/layout/
+            https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/
+            
+(3) SESSION : https://dash.plotly.com/dash-core-components/store

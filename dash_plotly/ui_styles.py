@@ -36,7 +36,8 @@ dt_style={
     'whiteSpace': 'normal',
     'height': 'auto',
     'width' : '500',
-    'lineHeight': '15px'
+    'lineHeight': '15px',
+    'marginLeft' : '410'
 }
 
 analyst_dt_style=[

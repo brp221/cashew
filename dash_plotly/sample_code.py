@@ -95,7 +95,95 @@ fig.show()
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+import dash_bootstrap_components as dbc
+from dash import html
 
+row = html.Div(
+    [
+        dbc.Row(dbc.Col(html.Div("A single, half-width column"), width=6)),
+        dbc.Row(
+            dbc.Col(html.Div("An automatically sized column"), width="auto")
+        ),
+        dbc.Row(
+            [
+                dbc.Col(html.Div("One of three columns"), width=3),
+                dbc.Col(html.Div("One of three columns")),
+                dbc.Col(html.Div("One of three columns"), width=3),
+            ]
+        ),
+    ]
+)
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
+dcc.Tabs([
+    dcc.Tab(label='TABLES', children=[ 
+        dcc.Dropdown( sectors, list(symbol_metadata_df.sector.unique()),
+            multi=True, id = 'sectorSelect', style={'display': 'inline-block', 'marginLeft':100,'marginBottom':8, 'marginTop':8,'marginRight':100, 'width':1450, 'height':40 }),
+        table_select,
+         html.Div([
+             html.Div([dash_table1], id='dash_table1',style={'display': 'inline-block', 'marginLeft':10,'marginRight':10, 'marginBottom':2}),
+             html.Div([analyst_checklist],id='analyst_checklist' ,style={'display': 'inline-block',"height":600, "width":200, 'marginLeft':20, 'marginRight':10,'marginBottom':200}),
+             
+             html.Div([dash_table3],id='dash_table2',style={'display': 'hidden', 'marginLeft':20,'marginBottom':2}),
+             html.Div([discount_checklist],id='discount_checklist',style={'display': 'hidden', 'marginRight':20, 'marginBottom':200}),
+             
+             html.Div([dash_table4], style={'display': 'hidden', 'marginLeft':45,'marginBottom':2}),
+             html.Div([growers_checklist], style={'display': 'hidden', 'marginLeft':20, 'marginBottom':2}),
+
+             html.Div([dash_table2], style={'display': 'hidden', 'marginLeft':20,'marginBottom':2}),
+             html.Div([haelthiest_checklist], style={'display': 'hidden', 'marginLeft':45,'marginBottom':10}),
+         ]),
+    ], style = tab_style, selected_style = tab_selected_style),
+    dcc.Tab(label='RESEARCH', children=[
+            html.Div([
+                html.Div([dcc.Graph(id="scatterPlot")], style={'display': 'inline-block'}),
+                html.Div([
+                    dcc.RadioItems(list(all_options.keys()),'Biggest Growth',id='table1',),
+                    dcc.RadioItems(id='table2',value='Best Value')
+                ], style={'display': 'inline-block', 'marginLeft':60}),
+            ]),
+        ], style = tab_style, selected_style = tab_selected_style),
+    dcc.Tab(label='ANALYSIS', children=[
+        html.Div([ 
+            html.Div([   
+                        # html.Div([  dcc.Input(id="stockSymbol", type="text", placeholder="symbol",value="NVDA", debounce=True   )])  , #style={'display': 'inline-block', 'marginLeft':10}),   
+                        # html.Div([  dcc.Graph(id="candleStick", style={'display': 'inline-block', 'marginLeft':0, 'marginTop':0})      ]),
+                        dcc.Input(id="stockSymbol", type="text", placeholder="symbol",value="NVDA", debounce=True,style={'display': 'inline-block', 'marginLeft':0, 'marginTop':0}   ),
+                        dcc.Graph(id="candleStick", style={'display': 'inline-block', 'marginLeft':0, 'marginTop':0}) ,
+                        dcc.Input(id="peerSymbol", type="text", placeholder="compare to", value="TSM", debounce=True,
+                                  style={'display': 'inline-block', 'marginLeft':10}), 
+                        dcc.Graph(id="radarChart")
+                    ], style={'display': 'inline-block', 'marginLeft':1,'marginRight':1,'marginBottom':10, 'marginTop':10}),
+            
+            # html.Div([
+            #           dcc.Input(id="peerSymbol", type="text", placeholder="compare to", value="TSM", debounce=True,
+            #                     style={'display': 'inline-block', 'marginLeft':10}), 
+            #           dcc.Graph(id="radarChart")], style={'display': 'inline-block', 'marginLeft':0,'marginBottom':200, 'marginTop':0}),
+            html.Div([
+                    dcc.Tabs([
+                      dcc.Tab(label='ANNUAL', children=[ html.Div([dcc.Graph(id="earningsBar")],  style={'display': 'inline-block', 'marginLeft':10, 'marginTop':10})]),
+                      dcc.Tab(label='QUARTER',children=[ html.Div([dcc.Graph(id="earningsLine")], style={'display': 'inline-block', 'marginLeft':10, 'marginTop':10})])
+                      ])#, style = earnings_tabs_styles),
+                ], style={'display': 'inline-block', 'marginLeft':1,'marginRight':1,'marginBottom':10, 'marginTop':10}),
+            
+            
+                    ], style={'display': 'inline-block', 'marginLeft':1,'marginRight':1,'marginBottom':300, 'marginTop':10}),
+            
+        html.Div([ 
+            html.Div([dcc.Slider(0, 20, 5,value=10,id='transactionCount')], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':40, 'width':250}),        
+            html.Div([html.H4('InsideTrading'),dcc.Graph(id="insideTradingBar")], style={'display': 'inline-block','width':250}),
+            dcc.Graph(id="growthChart"),
+            dcc.Graph(id="estimateGrowthChart")
+        ])
+    ], style = tab_style, selected_style = tab_selected_style),
+    dcc.Tab(label='CALENDAR', children=[], style = tab_style, selected_style = tab_selected_style),
+],style=main_tabs_styles )
+
+
+
+
+
+
+
+
