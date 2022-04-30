@@ -70,7 +70,12 @@ sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inl
 tableSelect =  create_single_dropdown("tableSelect", tables, 'Healthiest',{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'height':40, 'width':200 })
 
 #SEARCH
-searchSymbol = dbc.Input(id="stockSymbol", placeholder="symbol", type="text", value=symbol_metadata_df.Symbol[randint(1,100)], style={"width": 75, "height": 50},)
+randSymbol = symbol_metadata_df.Symbol[randint(1,100)]
+symbolSector = symbol_metadata_df[symbol_metadata_df["Symbol"]==randSymbol]["sector"].values[0]
+peerSymbolChosen = symbol_metadata_df[symbol_metadata_df["sector"]==symbolSector]["Symbol"].values[0]
+searchSymbol = dbc.Input(id="stockSymbol", placeholder="symbol", type="text", value=randSymbol, style={"width": 75, "height": 50},)
+peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value=peerSymbolChosen, style={"width": 75, "height": 50},)
+
 # stockSymbol= "NVDA"
 # url = ("https://financialmodelingprep.com/api/v4/insider-trading?symbol="+stockSymbol+"&page=0&apikey=ce687b3fe0554890e65d6a5e48f601f9")
 # insideTradingData = pd.DataFrame.from_dict(get_jsonparsed_data(url))
@@ -80,13 +85,13 @@ table_filters=dbc.Row([dbc.Col(tableSelect, width=2),dbc.Col(sectorSelect, width
 
 healthiest_content=dbc.Row([dbc.Col(healthiestChecklist, width=2),dbc.Col(healthiestTable, width=10)])
 
-analyst_content=dbc.Row([dbc.Col(analystChecklist, width=2),dbc.Col(analystTable, width=10)])
+analyst_content=dbc.Row([dbc.Col(analystChecklist, width=3),dbc.Col(analystTable, width=9)])
 
-discount_content=dbc.Row([dbc.Col(discountChecklist, width=2),dbc.Col(discountTable, width=10)])
+discount_content=dbc.Row([dbc.Col(discountChecklist, width=3),dbc.Col(discountTable, width=9)])
 
 growers_content=dbc.Row([dbc.Col(growersChecklist, width=2),dbc.Col(growersTable, width=10)])
 
-tablesPage = [table_filters,healthiest_content,html.Div(id='dd-output-container')]
+tablesPage = [table_filters,healthiest_content]
 
 researchPage = [
     dbc.Row([
@@ -103,6 +108,20 @@ researchPage = [
         ])
     ]
 
+analysisPage = [
+    dbc.Row([
+        dbc.Col(searchSymbol, width=2),
+        dbc.Col(dcc.Graph(id="estimateGrowthChart"), width=3),
+        dbc.Col(dcc.Graph(id="growthChart"), width=4),
+        dbc.Col(dcc.Graph(id="insideTradingBar"), width=3),
+        ]),
+    dbc.Row([
+        dbc.Col(peerSymbol, width=1),
+        dbc.Col(dcc.Graph(id="radarChart"), width=2),
+        dbc.Col(dcc.Graph(id="candleStick"), width=6),
+        dbc.Col(dcc.Graph(id="earningsLine"), width=3),
+        ])
+    ]
 #initialising app
 app = Dash(
     external_stylesheets = [dbc.themes.LUX], #LUX, #MINTY, #MORPH, #PULSE, #VAPOR, # ZEPHYR
@@ -113,54 +132,36 @@ app.layout = dbc.Container(
     navbar,
     dbc.Tabs(
         [
-            dbc.Tab(tablesPage,label="Tables", tab_id="tablesTab"),
-            dbc.Tab(researchPage,label="Research", tab_id="researchTab"),
-            # dbc.Tab(label="Analysis", tab_id="Research"),
+            dbc.Tab(tablesPage,label="Tables", tab_id="Tables"),
+            dbc.Tab(researchPage,label="Research", tab_id="Research"),
+            dbc.Tab(analysisPage,label="Analysis", tab_id="Analysis"),
         ],id="tabs", active_tab="Tables",
     ),
     # html.Div(id="tab-content", className="p-4", children=tablesPage),
 ])
-@app.callback(
-    Output('dd-output-container', 'children'),
-    Input('tableSelect', 'value')
-)
-def update_output(value):
-    return f'You have selected {value}'
 
 @app.callback(
-    Output('tablesTab', 'children'),
-    Input('tableSelect', 'value'))
+    Output("tabs", "children"),
+    Output("tableSelect", "value"),
+    Input("tableSelect", "value"))
 def update_tables_page(value):
-    print("value:", value)
+    print("selectedTable:", value)
     tablesPageSelected = [table_filters]
-    if(selectedTable=='Analyst Rating'):
+    if(value=='Analyst Rating'):
         tablesPageSelected.append(analyst_content)
-    elif(selectedTable=='Healthiest'):
+    elif(value=='Healthiest'):
         tablesPageSelected.append(healthiest_content)
-    elif(selectedTable=='Best Value'):
+    elif(value=='Best Value'):
         tablesPageSelected.append(discount_content)
-    elif(selectedTable=='Biggest Growth'):
+    elif(value=='Biggest Growth'):
         tablesPageSelected.append(growers_content)
-    return tablesPageSelected
+    allTabsChildren = [
+        dbc.Tab(tablesPageSelected,label="Tables", tab_id="Tables"),
+        dbc.Tab(researchPage,label="Research", tab_id="Research"),
+        dbc.Tab(analysisPage,label="Analysis", tab_id="Analysis"),
+    ]
+    return allTabsChildren, value
 
-# @app.callback(
-#     Output("tab-content", "children"),
-#     [Input("tabs", "active_tab")],
-# )
-# def render_tab_content(active_tab):
-#     """
-#     This callback takes the 'active_tab' property as input, as well as the
-#     stored graphs, and renders the tab content depending on what the value of
-#     'active_tab' is.
-#     """
-#     if active_tab:
-#         if active_tab == "Tables":
-#             return current_table(tableSelect.value)
-#         elif active_tab == "Research":
-#             return researchPage
-#     return "No tab selected"
-
-# def current_table(tableSelected):
 #     tableContent=[]
 #     if(tableSelected=='Analyst Rating'):
 #         tableContent=dbc.Row([dbc.Col(analystChecklist, width=2),dbc.Col(analystTable, width=10)])
@@ -172,8 +173,20 @@ def update_tables_page(value):
 #         tableContent=dbc.Row([dbc.Col(healthiestChecklist, width=2),dbc.Col(healthiestTable, width=10)])
 #     tablesPage = [dbc.Row([dbc.Col(tableSelect, width=2),dbc.Col(sectorSelect, width=10)]),tableContent]
 #     return tablesPage
+@app.callback(
+    Output("table1", "options"),
+    Input("table2", "value"))
+def scatter_table1_update(table2Choice):
+    table1Options = [x for x in tableOptions if not (x['value']==table2Choice)]
+    return table1Options
 
- 
+@app.callback(
+    Output("table2", "options"),
+    Input("table1", "value"))
+def scatter_table2_update(table1Choice):
+    table2Options = [x for x in tableOptions if not (x['value']==table1Choice)]
+    return table2Options
+
 @app.callback(
     Output("estimateGrowthChart", "figure"), 
     Input("stockSymbol", "value"))
@@ -300,43 +313,43 @@ def scatter_plot(table1, table2):
     return scatter_wrapper(df_y,df_x)
 
 
-# @app.callback(
-#     Output("candleStick", "figure"), 
-#     Input("stockSymbol", "value"))
-# def display_candlestick(stockSymbol):
-#     return candlestick_wrapper(stockSymbol)
+@app.callback(
+    Output("candleStick", "figure"), 
+    Input("stockSymbol", "value"))
+def display_candlestick(stockSymbol):
+    return candlestick_wrapper(stockSymbol)
     
-# @app.callback(
-#     Output("radarChart", "figure"), 
-#     Input("stockSymbol", "value"),
-#     Input("peerSymbol", "value"))
-# def display_radar(stockSymbol, peerSymbol):
-#     return radar_wrapper(stockSymbol, peerSymbol)
+@app.callback(
+    Output("radarChart", "figure"), 
+    Input("stockSymbol", "value"),
+    Input("peerSymbol", "value"))
+def display_radar(stockSymbol, peerSymbol):
+    return radar_wrapper(stockSymbol, peerSymbol)
 
 
-# @app.callback(
-#     Output("earningsLine", "figure"), 
-#     Input("stockSymbol", "value"))
-# def earnings_quarter(stockSymbol):
-#     return quarter_earnings_wrapper(stockSymbol)
+@app.callback(
+    Output("earningsLine", "figure"), 
+    Input("stockSymbol", "value"))
+def earnings_quarter(stockSymbol):
+    return quarter_earnings_wrapper(stockSymbol)
 
 
-# @app.callback(
-#     Output("earningsBar", "figure"), 
-#     Input("stockSymbol", "value"))
-# def earnings_bar(stockSymbol):
-#     return annual_earnings_wrapper(stockSymbol)
+@app.callback(
+    Output("earningsBar", "figure"), 
+    Input("stockSymbol", "value"))
+def earnings_bar(stockSymbol):
+    return annual_earnings_wrapper(stockSymbol)
 
 
 
-# @app.callback(
-#     Output("insideTradingBar", "figure"), 
-#     Input("stockSymbol", "value"),
-#     Input("transactionCount", "value"),
-#     # Input("timeFrame", "value"),
-#     )
-# def insider_trading(stockSymbol, transactionCount):
-#     return insider_trade_wrapper(stockSymbol)
+@app.callback(
+    Output("insideTradingBar", "figure"), 
+    Input("stockSymbol", "value"),
+    # Input("transactionCount", "value"),
+    # Input("timeFrame", "value"),
+    )
+def insider_trading(stockSymbol):
+    return insider_trade_wrapper(stockSymbol)
     
     
 app.run_server(debug=True)
