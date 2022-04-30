@@ -9,6 +9,8 @@ import sys
 sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 tables = ['Analyst Rating', 'Best Value', 'Biggest Growth', 'Healthiest']
+tableOptions = [{"label": tables[0], "value": tables[0]},{"label": tables[1], "value": tables[1]},
+           {"label": tables[2], "value": tables[2]},{"label": tables[3], "value": tables[3]}]
 all_options = {
     'Analyst Rating': [ 'Best Value', 'Biggest Growth', 'Healthiest'],
     'Best Value': ['Analyst Rating', 'Biggest Growth', 'Healthiest'],

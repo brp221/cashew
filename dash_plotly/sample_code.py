@@ -30,6 +30,27 @@ def update_output(input1, input2):
     return u'Input 1 {} and Input 2 {}'.format(input1, input2)
 
 
+
+
+
+
+#_____-------------_________-------------____________------------___________
+# TABLE SELECT LOGIC CODE USE IN FUTURE MAYBE 
+# @app.callback(
+#     Output("dash_table2", "style"), #Output("discount_checklist", "style"), 
+#     Input("tableSelect", "value"))
+# def select_discount(tableSelect):
+#     return {'display': 'block'} if tableSelect == 'Best Value' else {'display': 'none'}
+# @app.callback(
+#     Output("dash_table1", "style"), #Output("analyst_checklist", "style"), 
+#     Input("tableSelect", "value"))
+# def select_analysts(tableSelect):
+#     return {'display': 'block'} if tableSelect == 'Analyst Rating' else {'display': 'none'}
+
+
+
+
+
 # free acquisitions to be colored. Also outline importance of the seller/buyer in scope of company
 stockSymbol= "NVDA"
 url = ("https://financialmodelingprep.com/api/v4/insider-trading?symbol="+stockSymbol+"&page=0&apikey=ce687b3fe0554890e65d6a5e48f601f9")
