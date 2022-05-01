@@ -63,7 +63,7 @@ table2Choice = dbc.RadioItems(options=tableOptions,value=tables[1],id="table2",i
 analystChecklist = create_checklist("analystChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
 healthiestChecklist = create_checklist("healthiestChecklist", healthiest_companies_metadata_df.columns, healthiest_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
 discountChecklist = create_checklist("discountChecklist", best_value_df.columns, best_value_chosen, {'display': 'inline-block', 'marginLeft':-80,'width':400})
-growersChecklist = create_checklist("growersChecklist", biggest_growers_df.columns, biggest_growers_chosen, {'display': 'inline-block', 'marginLeft':-80,'width':400})
+growersChecklist = create_checklist("growersChecklist", biggest_growers_df.columns, biggest_growers_chosen, {'fontSize':10})
 
 #DROPDOWN
 sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'marginRight':100, 'height':80  })
@@ -73,26 +73,18 @@ tableSelect =  create_single_dropdown("tableSelect", tables, 'Healthiest',{'disp
 randSymbol = symbol_metadata_df.Symbol[randint(1,100)]
 symbolSector = symbol_metadata_df[symbol_metadata_df["Symbol"]==randSymbol]["sector"].values[0]
 peerSymbolChosen = symbol_metadata_df[symbol_metadata_df["sector"]==symbolSector]["Symbol"].values[0]
-searchSymbol = dbc.Input(id="stockSymbol", placeholder="symbol", type="text", value=randSymbol, style={"width": 75, "height": 50},)
-peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value=peerSymbolChosen, style={"width": 75, "height": 50},)
+searchSymbol = dbc.Input(id="stockSymbol", placeholder="symbol", type="text", value=randSymbol,size="sm", style={"width": 100, "height": 30})
+peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value=peerSymbolChosen, size="sm", style={"width": 100, "height": 30})
 
-# stockSymbol= "NVDA"
-# url = ("https://financialmodelingprep.com/api/v4/insider-trading?symbol="+stockSymbol+"&page=0&apikey=ce687b3fe0554890e65d6a5e48f601f9")
-# insideTradingData = pd.DataFrame.from_dict(get_jsonparsed_data(url))
-# insideTradingData['securityTransactedTrue'] = insideTradingData.securitiesTransacted
-# insideTradingData.loc[insideTradingData.acquistionOrDisposition == "D", 'securityTransactedTrue'] = insideTradingData.securitiesTransacted * -1
+#LAYOUT SHORTCUTS 
 table_filters=dbc.Row([dbc.Col(tableSelect, width=2),dbc.Col(sectorSelect, width=10)])
-
 healthiest_content=dbc.Row([dbc.Col(healthiestChecklist, width=2),dbc.Col(healthiestTable, width=10)])
-
 analyst_content=dbc.Row([dbc.Col(analystChecklist, width=3),dbc.Col(analystTable, width=9)])
-
 discount_content=dbc.Row([dbc.Col(discountChecklist, width=3),dbc.Col(discountTable, width=9)])
-
 growers_content=dbc.Row([dbc.Col(growersChecklist, width=2),dbc.Col(growersTable, width=10)])
 
+#PAGE CONTENT SHORTCUTS
 tablesPage = [table_filters,healthiest_content]
-
 researchPage = [
     dbc.Row([
         dbc.Col(dbc.Label("Choose X-axis"),width=3),
@@ -107,26 +99,24 @@ researchPage = [
             
         ])
     ]
-
 analysisPage = [
+    # dbc.Row([dbc.Col(searchSymbol, width=4)]),
     dbc.Row([
-        dbc.Col(searchSymbol, width=2),
-        dbc.Col(dcc.Graph(id="estimateGrowthChart"), width=3),
+        dbc.Col([searchSymbol,dcc.Graph(id="estimateGrowthChart")], width=4),
         dbc.Col(dcc.Graph(id="growthChart"), width=4),
-        dbc.Col(dcc.Graph(id="insideTradingBar"), width=3),
+        dbc.Col(dcc.Graph(id="insideTradingBar"), width=4),
         ]),
     dbc.Row([
-        dbc.Col(peerSymbol, width=1),
-        dbc.Col(dcc.Graph(id="radarChart"), width=2),
-        dbc.Col(dcc.Graph(id="candleStick"), width=6),
-        dbc.Col(dcc.Graph(id="earningsLine"), width=3),
+        # dbc.Col(peerSymbol, width=1),
+        dbc.Col([peerSymbol,dcc.Graph(id="radarChart")], width=4),
+        dbc.Col(dcc.Graph(id="candleStick"), width=4),
+        dbc.Col(dcc.Graph(id="earningsLine"), width=4),
         ])
     ]
-#initialising app
+#APP 
 app = Dash(
-    external_stylesheets = [dbc.themes.LUX], #LUX, #MINTY, #MORPH, #PULSE, #VAPOR, # ZEPHYR
+    external_stylesheets = [dbc.themes.MINTY], #LUX, #MINTY, #MORPH, #PULSE, #VAPOR, # ZEPHYR
     suppress_callback_exceptions=True) 
-
 app.layout = dbc.Container(
 [   
     navbar,

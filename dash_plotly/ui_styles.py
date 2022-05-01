@@ -105,12 +105,17 @@ discount_dt_style=[
             },
             'backgroundColor': '#d2e5e5',
             'color': 'black'
+        },
+        {
+            'if': {
+                # 'filter_query': '({DCFMinusPrice}/{Price_BV}) > 0.10',
+                #issue here ; is DCFMINUSPRICE A number?
+                'filter_query': '{DCFMinusPrice} > 15',
+                'column_id': 'Symbol'
+            },
+            'color': 'green', 
+            'fontWeight': 'bold',
         }
-        #{
-            # 'if': {
-            #     'filter_query': '({DCFMinusPrice}/{Price_BV}) > 0.10',
-            #     'column_id': 'DCFMinusPrice'
-            # },
         #     'if': {
         #         'filter_query': '{DCFMinusPrice}' > "10",
         #         'column_id': 'DCFMinusPrice'
@@ -140,12 +145,29 @@ growers_dt_style=[
         {
             'if': {
                 'row_index': 'even',  # number | 'odd' | 'even'
-                'column_id': ['freeCashFlowGrowth','revgrowth1Yr','revgrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ]
+                'column_id': ['Symbol','freeCashFlowGrowth','revgrowth1Yr','revgrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ]
             },
             'backgroundColor': '#d2e5e5',
             'color': 'black'
-        }      
+        },
+        {
+            'if': {
+                'filter_query': '{freeCashFlowGrowth} > 0.5',
+                'column_id': ['Symbol','freeCashFlowGrowth']
+            },
+            'color': 'green', 
+            'fontWeight': 'bold',
+        },
+        {
+            'if': {
+                'filter_query': '{freeCashFlowGrowth} < -0.5',
+                'column_id': ['Symbol','freeCashFlowGrowth']
+            },
+            'color': 'red', 
+            'fontWeight': 'bold',
+        },
     ]
+
 healthiest_dt_style=[
         {
             'if': {
@@ -156,43 +178,29 @@ healthiest_dt_style=[
         {
             'if': {
                 'row_index': 'odd',  # number | 'odd' | 'even'
-                'column_id': ['ROA','ROE','currentRatio','debtEquityRatio', 'ebitda','piotroskiScore', 'netProfitMargin', 'priceToOperatingCashFlowRatio', 'companyName', 'sector', 'industry', 'marketCap' ]
+                'column_id': ['Symbol','ROA','ROE','currentRatio','debtEquityRatio', 'ebitda','piotroskiScore', 'netProfitMargin', 'priceToOperatingCashFlowRatio', 'companyName', 'sector', 'industry', 'marketCap' ]
             },
             'backgroundColor': '#d2e5e5',
             'color': 'black'
-        }      
+        },
+        {
+            'if': {
+                'filter_query': '{piotroskiScore} > 6',
+                'column_id': ['Symbol','ROA','ROE','currentRatio','debtEquityRatio', 'ebitda','piotroskiScore', 'netProfitMargin', 'priceToOperatingCashFlowRatio', 'companyName', 'sector', 'industry', 'marketCap' ]
+            },
+            'color': 'green', 
+            'fontWeight': 'bold',
+        },
+        {
+            'if': {
+                'filter_query': '{piotroskiScore} <= 4',
+                'column_id': ['Symbol','ROA','ROE','currentRatio','debtEquityRatio', 'ebitda','piotroskiScore', 'netProfitMargin', 'priceToOperatingCashFlowRatio', 'companyName', 'sector', 'industry', 'marketCap' ]        
+            },
+            'color': 'red', 
+            'fontWeight': 'bold',
+        },
     ]
-# IMPORTANT AFFFFFF :::: 4 TABLEZ STRUCTURE 
-# html.Div([
-#     html.Div([analyst_checklist], style={'display': 'inline-block',"height":600, "width":200, 'marginLeft':20, 'marginRight':10,'marginBottom':200}),
-#     html.Div([dash_table1],       style={'display': 'inline-block', 'marginLeft':10,'marginRight':10, 'marginBottom':2}),
-#     html.Div([dash_table3],       style={'display': 'inline-block', 'marginLeft':20,'marginBottom':2}),
-#     html.Div([discount_checklist],style={'display': 'inline-block', 'marginRight':20, 'marginBottom':200}),
-# ]),
-# html.Div([
-#     html.Div([growers_checklist], style={'display': 'inline-block', 'marginLeft':20, 'marginBottom':2}),
-#     html.Div([dash_table4], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':2}),
-#     html.Div([dash_table2], style={'display': 'inline-block', 'marginLeft':20,'marginBottom':2}),
-#     html.Div([haelthiest_checklist], style={'display': 'inline-block', 'marginLeft':45,'marginBottom':10}),
-# ])
 
-
-        # {
-        #     'if': {
-        #         'filter_query': '{grahamMinusPrice}/{Price_BV} > 0.10',
-        #         'column_id': ['grahamMinusPrice', 'grahamNumber', 'Price_BV']
-        #     },
-        #     'color': 'green', 
-        #     'fontWeight': 'bold',
-        # },
-        # {
-        #     'if': {
-        #         'filter_query': '{grahamMinusPrice}/{Price_BV} < -0.10',
-        #         'column_id': ['grahamMinusPrice', 'grahamNumber', 'Price_BV']
-        #     },
-        #     'color': 'red', 
-        #     'fontWeight': 'bold',
-        # },
 # style_data_conditional=[
 #         {
 #             'if': {

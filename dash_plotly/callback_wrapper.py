@@ -23,9 +23,9 @@ def candlestick_wrapper(symbol):
                     high=priceDF['high'],
                     low=priceDF['low'],
                     close=priceDF['close'])])
-    fig.update_layout(
-        width=700, height = 520
-    )
+    # fig.update_layout(
+    #     width=700, height = 520
+    # )
     return fig
 
 def scatter_wrapper( table1, table2):
@@ -39,9 +39,9 @@ def scatter_wrapper( table1, table2):
     	         size="marketCap", color="sector",
                      hover_name="Symbol", log_x=True, size_max=60)
     
-    fig.update_layout(
-        width=1100, height = 700
-    )
+    # fig.update_layout(
+    #     width=1100, height = 700
+    # )
     #fig.show()
     return fig
     
@@ -80,7 +80,8 @@ def radar_wrapper(symbol, peerSymbol):
           visible=True,
           range=[0, 5]
         )),
-      showlegend=True, width=300,height=300
+      legend=dict(yanchor="top",y=1.4,xanchor="left",x=0.25), width=330,height=330
+      # showlegend=True#, width=300,height=300
     )
 
     return fig
@@ -106,7 +107,10 @@ def quarter_earnings_wrapper(symbol):
     fig.add_trace(go.Scatter(x=x2, y=y2,
                          mode='lines+markers',
                          name='NetIncome'))
-    fig.update_layout( width=450,height=400)
+    fig.update_layout( 
+        width=500,height=420,
+        legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1)
+    )
     return fig
     
 def annual_earnings_wrapper(symbol):
@@ -145,7 +149,7 @@ def annual_earnings_wrapper(symbol):
         marker_color='purple'
     ))
     
-    fig.update_layout(barmode='group', xaxis_tickangle=-45, width=450,height=400)
+    fig.update_layout(barmode='group', xaxis_tickangle=-45)#, width=450,height=400)
     #fig.show()
     return fig
     
@@ -162,7 +166,7 @@ def insider_trade_wrapper(symbol):
                 x=list(insideTradingData.securityTransactedTrue),
                 y=list(insideTradingData.typeOfOwner),
                 orientation='h'))
-    fig.update_layout( width=600,height=400)
+    # fig.update_layout( width=600,height=400)
     return fig
     
     
@@ -181,7 +185,7 @@ def growth_metric_wrapper(symbol):
     fig.add_trace(go.Scatter(x=x, y=netIncGrowth,
                          mode='lines+markers',
                          name='NetIncomeGrowth'))
-    fig.update_layout( width=650,height=450)
+    # fig.update_layout( width=650,height=450)
 
     return fig
 
@@ -208,7 +212,7 @@ def growth_future_wrapper(symbol):
     fig.add_trace(go.Scatter(x=x2, y=y2,
                          mode='lines+markers',
                          name='RevenueActual'))
-    fig.update_layout( width=650,height=450)
+    # fig.update_layout( width=650,height=450)
 
     return fig
     

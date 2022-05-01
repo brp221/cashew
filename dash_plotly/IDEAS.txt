@@ -4,29 +4,33 @@ FEATURES TO IMPLEMENT
 
 
 (1) ADJUSTABLE GRAPHS ON THE SAME 
-    (xAxis, yAxis customizability)
-    (Lables to indicate companies- think of the movie dashboard)
+    (a)xAxis, yAxis customizability - for this have 2 radioGroups available which correspond to the currently selected tables. similar to tables tab 
         
 (2) Joining 2 data tables to produce one 
+    (a) To be rendered underneath the selected table under Tables tabs
 
-(3) CALENDAR PAGE 
+(3) CALENDAR TAB 
+
+(4) CANDLESTICK AS ITS OWN TAB 
+    (a) Include Moving Average and other technical indicators 
+    
 
 (4) DESIGN :
-    (TITLES OF DISPLAYS (CAPITAL) Vs titles of widgets (lowe))
-    (throws some color on the tables: https://towardsdatascience.com/stunning-tables-using-bokeh-and-svg-e612a6f1c541)
-    (FILTERS ON THE OUTSIDES OF TABLES SO THAT THE USER CAN CONTROL WHAT THEY SEE ( LOCAL FILTERS OBVIOUSLY, 4 SETS in TOT + GLOBAL))
-    (?RANK METHODOLOGY?)
-    (EACH TABLE WILL APPROXIAMTELY BE THE SAME SIZE. ON TABLE CLICK YOU GET TRANSPORTED TO ANOTHER PAGE WHERE YOU CAN EXAMINE TABLE BETTER
-    OR MAYBE THE TABLE IS A POPUP)
+    (a) THEME: choose from available ones or create my own? widget styles need to have curved edges like the Mac. Font needs to 
+        be confident and sharp !
+    (b) TABLES: color green and red according to good/bad scores. 
+    (c) INPUTS: 
+        (i) wrap in a card or something man. 
+        (ii) refactor to bootstrap components only  
         
         
 (5) CHARTOLOGY :
-    (1) CANDLE STICK WITH INDICATORS
-    (2) INSIDER TRADING BAR CHART 
-    (3) GROWTH/VALUE OF COMPANY VS PEERS 
-    (4) EARNIGNS BAR CHART (future and present, 
+    (a) CANDLE STICK WITH INDICATORS
+    (b) INSIDER TRADING BAR CHART 
+    (c) GROWTH/VALUE OF COMPANY VS PEERS 
+    (d) EARNIGNS BAR CHART (future and present, 
         (4b) CONVERT TO LINE CHART FOR QUARTER ESTIMATES)
-    (5) COMPARISON VS PEERS/ individual company (of similar size) (peers define as same sector similar marketCap?) ( SPYDER STATIC OUTSOURCE BOKEH) 
-    (6) CLOUT CHARTING (SOCIAL MEDIA POPULARITY) ( DIQUE WHAT CJART YET) ( Ridge plot with distribution?)
-    (7) kNN Classification ( health and return rate or something )
-    (8) DATATABLES AS HEAT MAPS    
+    (e) RADAR CHART of Health : symbol vs Peer 
+    (f) CLOUT CHARTING (SOCIAL MEDIA POPULARITY) ( DIQUE WHAT CJART YET) ( Ridge plot with distribution?)
+    (g) kNN Classification ( health and return rate or something )
+    (h) DATATABLES AS HEAT MAPS    
