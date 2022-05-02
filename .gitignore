@@ -37,3 +37,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# __pycaches__
+dash_plotly/__pycache__/*
