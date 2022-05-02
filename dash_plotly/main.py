@@ -50,8 +50,8 @@ sectors.remove('')
 # TABLES
 analystTable = create_table("DT_analysts", analyst_rating_metadata_df, analyst_rating_chosen, dt_style, analyst_dt_style)
 healthiestTable = create_table("DT_healthiest", healthiest_companies_metadata_df, healthiest_chosen, dt_style, healthiest_dt_style)
-discountTable = create_table("DT_discount", best_value_df, best_value_chosen, dt_style, discount_dt_style)
-growersTable = create_table("DT_growers", biggest_growers_df, biggest_growers_chosen, dt_style, growers_dt_style)
+discountTable = create_table("DT_discount", best_value_metadata_df, best_value_chosen, dt_style, discount_dt_style)
+growersTable = create_table("DT_growers", biggest_growers_metadata_df, biggest_growers_chosen, dt_style, growers_dt_style)
 
 # table_select_1 = dcc.Dropdown(tables,'Analyst Rating' , id = 'table1',style={'marginBottom':80, 'marginRight':200, 'width':200, 'height':60})
 # table_select_2 = dcc.Dropdown(tables,'Best Value'  , id = 'table2', style={'marginBottom':300, 'marginRight':200, 'width':200, 'height':60})
@@ -62,8 +62,10 @@ table2Choice = dbc.RadioItems(options=tableOptions,value=tables[1],id="table2",i
 #CHECKLISTS
 analystChecklist = create_checklist("analystChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
 healthiestChecklist = create_checklist("healthiestChecklist", healthiest_companies_metadata_df.columns, healthiest_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
-discountChecklist = create_checklist("discountChecklist", best_value_df.columns, best_value_chosen, {'display': 'inline-block', 'marginLeft':-80,'width':400})
-growersChecklist = create_checklist("growersChecklist", biggest_growers_df.columns, biggest_growers_chosen, {'fontSize':10})
+discountChecklist = create_checklist("discountChecklist", best_value_metadata_df.columns, best_value_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':200})
+growersChecklist = create_checklist("growersChecklist", biggest_growers_metadata_df.columns, biggest_growers_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':200})
+indicatorChecklist = create_checklist("indicatorChecklist", indicators_all, indicators_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
+# timeframeChecklist = create_radio("timeframeChecklist", indicators_all, indicators_chosen, {'display': 'inline-block','fontSize':10})
 
 #DROPDOWN
 sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'marginRight':100, 'height':80  })
@@ -95,36 +97,46 @@ researchPage = [
         dbc.Col(table2Choice, width=6),
         ]),
     dbc.Row([
-            dbc.Col(dcc.Graph(id="scatterPlot"), width=12),
-            
+            dbc.Col(dcc.Graph(id="scatterPlot",config={'displayModeBar': False}), width=12),            
         ])
     ]
 analysisPage = [
     # dbc.Row([dbc.Col(searchSymbol, width=4)]),
     dbc.Row([
-        dbc.Col([searchSymbol,dcc.Graph(id="estimateGrowthChart")], width=4),
-        dbc.Col(dcc.Graph(id="growthChart"), width=4),
-        dbc.Col(dcc.Graph(id="insideTradingBar"), width=4),
+        dbc.Col([searchSymbol,dcc.Graph(id="estimateGrowthChart")], width=5),
+        #dbc.Col(dcc.Graph(id="growthChart"), width=4),
+        dbc.Col(dcc.Graph(id="insideTradingBar"), width=5),
         ]),
     dbc.Row([
         # dbc.Col(peerSymbol, width=1),
-        dbc.Col([peerSymbol,dcc.Graph(id="radarChart")], width=4),
-        dbc.Col(dcc.Graph(id="candleStick"), width=4),
-        dbc.Col(dcc.Graph(id="earningsLine"), width=4),
+        dbc.Col([peerSymbol,dcc.Graph(id="radarChart")], width=6),
+        #dbc.Col(dcc.Graph(id="candleStick"), width=4),
+        dbc.Col(dcc.Graph(id="earningsLine"), width=6),
         ])
     ]
+candlestickPage = [
+    dbc.Row([
+        dbc.Col(dcc.Graph(id="candleStick"), width=10),
+        dbc.Col(indicatorChecklist, width=2),
+        ]),
+    # dbc.Row([
+    #     dbc.Col(dcc.Graph(id="test"), width=10)
+    #     ])
+    ]
+
 #APP 
 app = Dash(
-    external_stylesheets = [dbc.themes.MINTY], #LUX, #MINTY, #MORPH, #PULSE, #VAPOR, # ZEPHYR
+    external_stylesheets = [dbc.themes.VAPOR], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
     suppress_callback_exceptions=True) 
 app.layout = dbc.Container(
 [   
     navbar,
     dbc.Tabs(
         [
-            dbc.Tab(tablesPage,label="Tables", tab_id="Tables"),
-            dbc.Tab(researchPage,label="Research", tab_id="Research"),
-            dbc.Tab(analysisPage,label="Analysis", tab_id="Analysis"),
+            dbc.Tab(tablesPage,label="DATA", tab_id="Tables"),
+            dbc.Tab(researchPage,label="RESEARCH", tab_id="Research"),
+            dbc.Tab(analysisPage,label="PROFILE", tab_id="Analysis"),
+            dbc.Tab(candlestickPage,label="PRICE", tab_id="Candlestick"),
         ],id="tabs", active_tab="Tables",
     ),
     # html.Div(id="tab-content", className="p-4", children=tablesPage),
@@ -146,9 +158,10 @@ def update_tables_page(value):
     elif(value=='Biggest Growth'):
         tablesPageSelected.append(growers_content)
     allTabsChildren = [
-        dbc.Tab(tablesPageSelected,label="Tables", tab_id="Tables"),
-        dbc.Tab(researchPage,label="Research", tab_id="Research"),
-        dbc.Tab(analysisPage,label="Analysis", tab_id="Analysis"),
+        dbc.Tab(tablesPageSelected,label="DATA", tab_id="Tables"),
+        dbc.Tab(researchPage,label="RESEARCH", tab_id="Research"),
+        dbc.Tab(analysisPage,label="PROFILE", tab_id="Analysis"),
+        dbc.Tab(candlestickPage,label="PRICE", tab_id="Candlestick"),
     ]
     return allTabsChildren, value
 
@@ -183,26 +196,40 @@ def scatter_table2_update(table1Choice):
 def growth_future(stockSymbol):
     return growth_future_wrapper(stockSymbol)
 
-
 @app.callback(
     Output("growthChart", "figure"), 
     Input("stockSymbol", "value"))
 def growth_metric(stockSymbol):
     return growth_metric_wrapper(stockSymbol)
 
-
 @app.callback(
     Output("DT_analysts", "data"), 
     Input("sectorSelect", "value"))
-# Output("DT_healthiest", "data"), Output("DT_discount", "data"), Output("DT_growers", "data")
-# [State('DT_healthiest', 'data')],[State('DT_discount', 'data')], [State('DT_growers', 'data')]
-def table_update(sectorSelect):
-    # df = analyst_rating_metadata_df[analyst_rating_metadata_df.sector.isin(sectorSelect)]
-    print(sectorSelect )
+def DT_analysts_update(sectorSelect):
+    print("updating DT_analysts")
     return analyst_rating_metadata_df[analyst_rating_metadata_df.sector.isin(sectorSelect)].to_dict('records')
 
-# # Output("DT_healthiest", "data"), Output("DT_discount", "data"), Output("DT_growers", "data")
-# # [State('DT_healthiest', 'data')],[State('DT_discount', 'data')], [State('DT_growers', 'data')]
+@app.callback(
+    Output("DT_healthiest", "data"), 
+    Input("sectorSelect", "value"))
+def DT_healthiest_update(sectorSelect):
+    print("updating DT_healthiest")
+    return healthiest_companies_metadata_df[healthiest_companies_metadata_df.sector.isin(sectorSelect)].to_dict('records')
+
+@app.callback(
+    Output("DT_discount", "data"), 
+    Input("sectorSelect", "value"))
+def DT_discount_update(sectorSelect):
+    print("updating DT_discount")
+    return best_value_metadata_df[best_value_metadata_df.sector.isin(sectorSelect)].to_dict('records')
+
+@app.callback(
+    Output("DT_growers", "data"), 
+    Input("sectorSelect", "value"))
+def DT_growers_update(sectorSelect):
+    print("updating DT_growers")
+    return biggest_growers_metadata_df[biggest_growers_metadata_df.sector.isin(sectorSelect)].to_dict('records')
+
 
 @app.callback( 
     Output("DT_analysts", "columns"),
@@ -244,18 +271,6 @@ def columns_table4(value, columns):
     columns = [{"name": i, "id": i, 'hideable': False} for i in value]
     return columns
 
-
-# @app.callback(
-#     Output("table2", "options"),
-#     Input("table1", "value"))
-# def update_table2(selected_table1):
-#     return [{'label': i, 'value': i} for i in all_options[selected_table1]]
-
-# @app.callback(
-#     Output("table1", "options"),
-#     Input("table2", "value"))
-# def update_table1(selected_table2):
-#     return [{'label': i, 'value': i} for i in all_options[selected_table2]]
 
 @app.callback(
     Output("scatterPlot", "figure"),
@@ -305,10 +320,18 @@ def scatter_plot(table1, table2):
 
 @app.callback(
     Output("candleStick", "figure"), 
-    Input("stockSymbol", "value"))
-def display_candlestick(stockSymbol):
-    return candlestick_wrapper(stockSymbol)
+    [Input("stockSymbol", "value"),Input("indicatorChecklist", "value")])
+def display_candlestick(stockSymbol,indicators):
+    return candlestick_wrapper(stockSymbol, indicators)
     
+# @app.callback(
+#     Output("test", "figure"), 
+#     [Input("stockSymbol", "value"),Input("indicatorChecklist", "value")])
+# def test(stockSymbol,indicators):
+#     return test_wrapper(stockSymbol, indicators)
+    
+
+
 @app.callback(
     Output("radarChart", "figure"), 
     Input("stockSymbol", "value"),

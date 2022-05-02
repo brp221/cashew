@@ -6,6 +6,7 @@ Created on Sun Apr 17 21:48:30 2022
 @author: bratislavpetkovic
 """
 import pandas as pd 
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -13,19 +14,30 @@ import sys
 sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 from helper_functions import  get_jsonparsed_data
 
-def candlestick_wrapper(symbol):
+import fmpsdk
+
+apikey = "ce687b3fe0554890e65d6a5e48f601f9"
+
+def candlestick_wrapper(symbol, indicators):
+    # incorporate control for time frame: daily, 1min 5min ... 
     print("Candlestick wrapper:"+symbol+"\n")
     url = ("https://financialmodelingprep.com/api/v3/historical-price-full/" +symbol + "?apikey=ce687b3fe0554890e65d6a5e48f601f9")
     priceDF = pd.DataFrame.from_dict(get_jsonparsed_data(url)["historical"])
     priceDF["date"] = pd.to_datetime(priceDF["date"])
-    fig = go.Figure(data=[go.Candlestick(x=priceDF['date'],
-                    open=priceDF['open'],
-                    high=priceDF['high'],
-                    low=priceDF['low'],
-                    close=priceDF['close'])])
-    # fig.update_layout(
-    #     width=700, height = 520
-    # )
+    
+    figureData = [go.Candlestick(x=priceDF['date'],open=priceDF['open'],high=priceDF['high'],low=priceDF['low'],close=priceDF['close'])]
+    for i in indicators:
+        df = pd.DataFrame.from_dict(fmpsdk.technical_indicators("ce687b3fe0554890e65d6a5e48f601f9",symbol,"daily",i))
+        if(len(df)>0): 
+            df["date"] = pd.to_datetime(df["date"])
+            # print(i,"--> ",df.iloc[0])
+            line = go.Scatter(x=df["date"], y=df[i],  mode='lines',name=i)
+            figureData.append(line)
+    fig = go.Figure(data=figureData)
+  
+    fig.update_layout(
+        width=1000, height = 750
+    )
     return fig
 
 def scatter_wrapper( table1, table2):
@@ -40,7 +52,7 @@ def scatter_wrapper( table1, table2):
                      hover_name="Symbol", log_x=True, size_max=60)
     
     # fig.update_layout(
-    #     width=1100, height = 700
+    #     width=1100, height = 700 
     # )
     #fig.show()
     return fig
@@ -149,7 +161,7 @@ def annual_earnings_wrapper(symbol):
         marker_color='purple'
     ))
     
-    fig.update_layout(barmode='group', xaxis_tickangle=-45)#, width=450,height=400)
+    fig.update_layout(barmode='group', xaxis_tickangle=-45,legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))#, width=450,height=400)
     #fig.show()
     return fig
     
@@ -162,11 +174,17 @@ def insider_trade_wrapper(symbol):
     insideTradingData = pd.DataFrame.from_dict(get_jsonparsed_data(url))
     insideTradingData['securityTransactedTrue'] = insideTradingData.securitiesTransacted
     insideTradingData.loc[insideTradingData.acquistionOrDisposition == "D", 'securityTransactedTrue'] = insideTradingData.securitiesTransacted * -1 
-    fig = go.Figure(go.Bar(
-                x=list(insideTradingData.securityTransactedTrue),
-                y=list(insideTradingData.typeOfOwner),
-                orientation='h'))
-    # fig.update_layout( width=600,height=400)
+    conditionlist = [
+        (insideTradingData['typeOfOwner'].str.contains("10 percent owner")),
+        (insideTradingData['typeOfOwner'].str.contains("director")) ,
+        (insideTradingData['typeOfOwner'].str.contains("officer")) & (~insideTradingData['typeOfOwner'].str.contains("director")),
+        (insideTradingData['typeOfOwner'].str.contains("other"))]
+    choicelist = [ '10 % owner','director', 'officer', 'other']
+    insideTradingData['employeeType'] = np.select(conditionlist, choicelist, default='Unknown')
+    barData = insideTradingData.groupby(['employeeType','acquistionOrDisposition'])['securityTransactedTrue'].sum().reset_index()
+    fig = px.bar(barData, y='securityTransactedTrue', x='employeeType',color='acquistionOrDisposition', text='securityTransactedTrue')
+    fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
     return fig
     
     
@@ -185,7 +203,7 @@ def growth_metric_wrapper(symbol):
     fig.add_trace(go.Scatter(x=x, y=netIncGrowth,
                          mode='lines+markers',
                          name='NetIncomeGrowth'))
-    # fig.update_layout( width=650,height=450)
+    fig.update_layout( legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))#width=650,height=450)
 
     return fig
 
@@ -212,9 +230,33 @@ def growth_future_wrapper(symbol):
     fig.add_trace(go.Scatter(x=x2, y=y2,
                          mode='lines+markers',
                          name='RevenueActual'))
-    # fig.update_layout( width=650,height=450)
+    fig.update_layout( legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))#width=650,height=450)
 
     return fig
+
+
+# def test_wrapper(symbol, indicators):
+#     figureData=[]
+#     print(indicators)
+#     print(len(indicators))
+#     for i in indicators:
+#         df = pd.DataFrame.from_dict(fmpsdk.technical_indicators("ce687b3fe0554890e65d6a5e48f601f9",symbol,"daily",i))
+#         if(len(df)>0): 
+#             print(df.columns)
+#             df["date"] = pd.to_datetime(df["date"])
+#             print(i,"--> ",df.iloc[0])
+#             print("\n\n")
+#             line = go.Scatter(x=df["date"], y=df[i],  mode='lines',name=i)
+#             figureData.append(line)
+#     fig = go.Figure(data=figureData)
+  
+#     fig.update_layout(
+#         width=1000, height = 750
+#     )
+#     return fig 
+
     
+
+
 # def debt_wrapper(symbol):
 #     #debt paid off yearly vs increasing debt. 

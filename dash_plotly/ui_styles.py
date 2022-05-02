@@ -101,7 +101,7 @@ discount_dt_style=[
         {
             'if': {
                 'row_index': 'odd',  # number | 'odd' | 'even'
-                'column_id': ['Symbol','DCFminusPrice','grahamNumber', 'InsiderPurchased', 'TransactionCount', 'Price_BV', 'yearHigh', 'yearLow', 'DCF', ]
+                'column_id': ['Symbol','DCFminusPrice','grahamNumber', 'InsiderPurchased', 'TransactionCount', 'Price_BV', 'yearHigh', 'yearLow', 'DCF', 'companyName', 'sector', 'industry', 'country', 'marketCap']
             },
             'backgroundColor': '#d2e5e5',
             'color': 'black'
@@ -116,22 +116,6 @@ discount_dt_style=[
             'color': 'green', 
             'fontWeight': 'bold',
         }
-        #     'if': {
-        #         'filter_query': '{DCFMinusPrice}' > "10",
-        #         'column_id': 'DCFMinusPrice'
-        #     },
-        #     'color': 'green', 
-        #     'fontWeight': 'bold',
-        # },
-        # {
-        #     'if': {
-        #         'filter_query': '{DCFMinusPrice}' < "-10",
-        #         'column_id': 'DCFMinusPrice'
-        #     },
-        #     'color': 'red', 
-        #     'fontWeight': 'bold',
-        # },
-
         
     ]
 
@@ -145,7 +129,7 @@ growers_dt_style=[
         {
             'if': {
                 'row_index': 'even',  # number | 'odd' | 'even'
-                'column_id': ['Symbol','freeCashFlowGrowth','revgrowth1Yr','revgrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ]
+                'column_id': ['Symbol','freeCashFlowGrowth','revgrowth1Yr','revgrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ,'companyName', 'sector', 'industry', 'country', 'marketCap']
             },
             'backgroundColor': '#d2e5e5',
             'color': 'black'
