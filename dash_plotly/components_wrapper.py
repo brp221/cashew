@@ -5,10 +5,13 @@ Created on Fri Apr 29 11:01:57 2022
 
 @author: bratislavpetkovic
 """
-from dash import dash_table, dcc
+from dash import dash_table, dcc, html
 import dash_bootstrap_components as dbc
 import sys
 sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
+
+LOGO_1 = "https://img.freepik.com/free-vector/cashew-nut-vector-illustration-concept-design-templatecashew_598213-23.jpg?w=1380"
+LOGO_2 = "https://img.freepik.com/free-vector/cashew-nut-vector-illustration-concept-design-templatecashew_598213-70.jpg?w=2000"
 
 navbar = dbc.NavbarSimple(
     children=[
@@ -27,6 +30,40 @@ navbar = dbc.NavbarSimple(
     brand_href="#",
     color="dark",
     dark=True,
+)
+
+navbar = dbc.Navbar(
+    dbc.Container(
+        [
+            html.A(
+                # Use row and col to control vertical alignment of logo / brand
+                dbc.Row(
+                    [   dbc.Col(html.Plaintext("                                                 ")),
+                        dbc.Col(html.Img(src=LOGO_1, height="90px", width = "90px")),
+                        dbc.Col(html.Plaintext("    ")),
+                        dbc.Col(dbc.NavbarBrand("            CASHEW ™", class_name="ms-2")),
+                    ],
+                    align="center",
+                    class_name="g-0",
+                ),
+                href="https://plotly.com",
+                style={"textDecoration": "none"},
+            ),
+            dbc.NavbarToggler(id="navbar-toggler2", n_clicks=0),
+            # dbc.Collapse(
+            #     dbc.Nav(
+            #         [nav_item, dropdown],
+            #         class_name="ms-auto",
+            #         navbar=True,
+            #     ),
+            #     id="navbar-collapse2",
+            #     navbar=True,
+            # ),
+        ],
+    ),
+    color="primary",
+    dark=True,
+    className="mb-5",
 )
 
 

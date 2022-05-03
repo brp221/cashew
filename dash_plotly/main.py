@@ -38,6 +38,7 @@ del biggest_growers_metadata_df["price"]
 
 best_value_df = fetch_best_value()          # BEST VALUE
 best_value_metadata_df =  best_value_df.merge(symbol_metadata_df)
+best_value_metadata_df=best_value_metadata_df.sort_values(by=['marketCap'], ascending=False)
 
 healthiest_companies_df = fetch_healthiest_companies()  # HEALTHIEST COMPANIES 
 healthiest_companies_metadata_df =  healthiest_companies_df.merge(symbol_metadata_df)
@@ -53,8 +54,7 @@ healthiestTable = create_table("DT_healthiest", healthiest_companies_metadata_df
 discountTable = create_table("DT_discount", best_value_metadata_df, best_value_chosen, dt_style, discount_dt_style)
 growersTable = create_table("DT_growers", biggest_growers_metadata_df, biggest_growers_chosen, dt_style, growers_dt_style)
 
-# table_select_1 = dcc.Dropdown(tables,'Analyst Rating' , id = 'table1',style={'marginBottom':80, 'marginRight':200, 'width':200, 'height':60})
-# table_select_2 = dcc.Dropdown(tables,'Best Value'  , id = 'table2', style={'marginBottom':300, 'marginRight':200, 'width':200, 'height':60})
+# marketCapChecklist = create_checklist("marketCapChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
 table1Choice = dbc.RadioItems(options=tableOptions,value=tables[0],id="table1",inline=True)
 table2Choice = dbc.RadioItems(options=tableOptions,value=tables[1],id="table2",inline=True)
         
@@ -67,6 +67,7 @@ growersChecklist = create_checklist("growersChecklist", biggest_growers_metadata
 indicatorChecklist = create_checklist("indicatorChecklist", indicators_all, indicators_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
 # timeframeChecklist = create_radio("timeframeChecklist", indicators_all, indicators_chosen, {'display': 'inline-block','fontSize':10})
 
+
 #DROPDOWN
 sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'marginRight':100, 'height':80  })
 tableSelect =  create_single_dropdown("tableSelect", tables, 'Healthiest',{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'height':40, 'width':200 })
@@ -78,12 +79,62 @@ peerSymbolChosen = symbol_metadata_df[symbol_metadata_df["sector"]==symbolSector
 searchSymbol = dbc.Input(id="stockSymbol", placeholder="symbol", type="text", value=randSymbol,size="sm", style={"width": 100, "height": 30})
 peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value=peerSymbolChosen, size="sm", style={"width": 100, "height": 30})
 
+
+#CARDS
+analyst_CL_card = dbc.Card([
+                            dbc.CardHeader(
+                                [
+                                    html.Div("Select Columns:"),
+                                ]
+                            ),
+                            dbc.CardBody(
+                                dbc.Row([
+                                        dbc.Col([analystChecklist ])]))],
+                            style={
+                                'width':  "100%", "display": 'flex', "align-items":"right", "justify-content":"right",
+                                "background": "dark",
+                            },)
+
+# filterCard = dbc.Card(
+#     dbc.CardBody(
+#         [
+#             marketCapSlider,
+#             tableSelect
+#         ]
+#     ),
+#     style={
+        
+#         "border-radius": "2%",
+#         "background": "secondary",
+#     },
+# )
+
+radarCard = dbc.Card(
+    dbc.CardBody(
+        [
+            peerSymbol,
+            dcc.Graph(id="radarChart")
+        ]
+    ),
+    style={
+        
+        "border-radius": "2%",
+        "background": "secondary",
+    },
+)
+
 #LAYOUT SHORTCUTS 
-table_filters=dbc.Row([dbc.Col(tableSelect, width=2),dbc.Col(sectorSelect, width=10)])
+table_filters=dbc.Row([
+    # dbc.Col(marketCapSlider, width=3),
+    dbc.Col(tableSelect, width=2),
+    dbc.Col(sectorSelect, width=10)
+])
+
 healthiest_content=dbc.Row([dbc.Col(healthiestChecklist, width=2),dbc.Col(healthiestTable, width=10)])
-analyst_content=dbc.Row([dbc.Col(analystChecklist, width=3),dbc.Col(analystTable, width=9)])
-discount_content=dbc.Row([dbc.Col(discountChecklist, width=3),dbc.Col(discountTable, width=9)])
+analyst_content=dbc.Row([dbc.Col(analyst_CL_card, width=2),dbc.Col(analystTable, width=10)])
+discount_content=dbc.Row([dbc.Col(discountChecklist, width=2),dbc.Col(discountTable, width=10)])
 growers_content=dbc.Row([dbc.Col(growersChecklist, width=2),dbc.Col(growersTable, width=10)])
+
 
 #PAGE CONTENT SHORTCUTS
 tablesPage = [table_filters,healthiest_content]
@@ -103,20 +154,20 @@ researchPage = [
 analysisPage = [
     # dbc.Row([dbc.Col(searchSymbol, width=4)]),
     dbc.Row([
-        dbc.Col([searchSymbol,dcc.Graph(id="estimateGrowthChart")], width=5),
+        dbc.Col([searchSymbol,dcc.Graph(id="estimateGrowthChart")], width=6),
         #dbc.Col(dcc.Graph(id="growthChart"), width=4),
         dbc.Col(dcc.Graph(id="insideTradingBar"), width=5),
         ]),
     dbc.Row([
         # dbc.Col(peerSymbol, width=1),
-        dbc.Col([peerSymbol,dcc.Graph(id="radarChart")], width=6),
-        #dbc.Col(dcc.Graph(id="candleStick"), width=4),
-        dbc.Col(dcc.Graph(id="earningsLine"), width=6),
+        # dbc.Col([peerSymbol,dcc.Graph(id="radarChart")], width=6),
+        dbc.Col(radarCard, width="auto"),
+        dbc.Col(dcc.Graph(id="earningsLine"), width='auto'),
         ])
     ]
 candlestickPage = [
     dbc.Row([
-        dbc.Col(dcc.Graph(id="candleStick"), width=10),
+        dbc.Col(dcc.Graph(id="candleStick",config={'displayModeBar': False}), width=10),
         dbc.Col(indicatorChecklist, width=2),
         ]),
     # dbc.Row([
@@ -126,7 +177,7 @@ candlestickPage = [
 
 #APP 
 app = Dash(
-    external_stylesheets = [dbc.themes.VAPOR], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
+    external_stylesheets = [dbc.themes.PULSE], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
     suppress_callback_exceptions=True) 
 app.layout = dbc.Container(
 [   

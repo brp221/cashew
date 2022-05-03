@@ -22,6 +22,13 @@ FEATURES TO IMPLEMENT
     (c) INPUTS: 
         (i) wrap in a card or something man. 
         (ii) refactor to bootstrap components only  
+    (d) provide education and defenitions https://dash-bootstrap-components.opensource.faculty.ai/docs/components/tooltip/
+    (e) checklists inside of cardbody
+    (f) fade tables in and out?
+    (g) spinner while something loads
+    (h) create unique theme 
+    (i)
+    (j)
         
         
 (5) CHARTOLOGY :
@@ -34,3 +41,4 @@ FEATURES TO IMPLEMENT
     (f) CLOUT CHARTING (SOCIAL MEDIA POPULARITY) ( DIQUE WHAT CJART YET) ( Ridge plot with distribution?)
     (g) kNN Classification ( health and return rate or something )
     (h) DATATABLES AS HEAT MAPS    
+

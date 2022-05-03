@@ -36,7 +36,7 @@ def candlestick_wrapper(symbol, indicators):
     fig = go.Figure(data=figureData)
   
     fig.update_layout(
-        width=1000, height = 750
+        template='simple_white',width=1000, height = 750
     )
     return fig
 
@@ -48,7 +48,7 @@ def scatter_wrapper( table1, table2):
         del table2['rank_overall_y']
     merged_df = table1.merge(table2)
     fig = px.scatter(merged_df, x="rank_overall_x", y="rank_overall_y",
-    	         size="marketCap", color="sector",
+    	         size="marketCap", color="sector", template='simple_white',
                      hover_name="Symbol", log_x=True, size_max=60)
     
     # fig.update_layout(
@@ -184,7 +184,8 @@ def insider_trade_wrapper(symbol):
     barData = insideTradingData.groupby(['employeeType','acquistionOrDisposition'])['securityTransactedTrue'].sum().reset_index()
     fig = px.bar(barData, y='securityTransactedTrue', x='employeeType',color='acquistionOrDisposition', text='securityTransactedTrue')
     fig.update_traces(texttemplate='%{text:.2s}', textposition='outside')
-    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide',
+                      legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
     return fig
     
     

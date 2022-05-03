@@ -129,7 +129,7 @@ growers_dt_style=[
         {
             'if': {
                 'row_index': 'even',  # number | 'odd' | 'even'
-                'column_id': ['Symbol','freeCashFlowGrowth','revgrowth1Yr','revgrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ,'companyName', 'sector', 'industry', 'country', 'marketCap']
+                'column_id': ['Symbol','freeCashFlowGrowth','revGrowth1Yr','revGrowth2Yr','netIncomeGrowth1Yr', 'netIncomeGrowth2Yr','debt_repayment', 'employeeGrowth' ,'companyName', 'sector', 'industry', 'country', 'marketCap']
             },
             'backgroundColor': '#d2e5e5',
             'color': 'black'
