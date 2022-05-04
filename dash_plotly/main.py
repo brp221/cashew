@@ -21,7 +21,7 @@ sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 from helper_functions import  get_jsonparsed_data, health_preparer, discount_preparer, growers_preparer, analyst_rating_preparer
 from db_helpers import fetch_symbol_metadata, fetch_analyst_rating, fetch_biggest_growers, fetch_best_value, fetch_healthiest_companies
-from ui_styles import dt_style, analyst_dt_style, tab_style, main_tabs_styles, tab_selected_style, discount_dt_style, healthiest_dt_style, growers_dt_style, earnings_tabs_styles
+from ui_styles import *
 from callback_wrapper import *
 from select_options import * 
 from components_wrapper import *
@@ -60,11 +60,11 @@ table2Choice = dbc.RadioItems(options=tableOptions,value=tables[1],id="table2",i
         
 
 #CHECKLISTS
-analystChecklist = create_checklist("analystChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
-healthiestChecklist = create_checklist("healthiestChecklist", healthiest_companies_metadata_df.columns, healthiest_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
-discountChecklist = create_checklist("discountChecklist", best_value_metadata_df.columns, best_value_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':200})
-growersChecklist = create_checklist("growersChecklist", biggest_growers_metadata_df.columns, biggest_growers_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':200})
-indicatorChecklist = create_checklist("indicatorChecklist", indicators_all, indicators_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
+analystChecklist = create_checklist("analystChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'block'})
+healthiestChecklist = create_checklist("healthiestChecklist", healthiest_companies_metadata_df.columns, healthiest_chosen, {'display': 'block'})
+discountChecklist = create_checklist("discountChecklist", best_value_metadata_df.columns, best_value_chosen, {'display': 'block'})
+growersChecklist = create_checklist("growersChecklist", biggest_growers_metadata_df.columns, biggest_growers_chosen, {'display': 'block'})
+indicatorChecklist = create_checklist("indicatorChecklist", indicators_all, indicators_chosen, {'display': 'block', })
 # timeframeChecklist = create_radio("timeframeChecklist", indicators_all, indicators_chosen, {'display': 'inline-block','fontSize':10})
 
 
@@ -81,19 +81,11 @@ peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value
 
 
 #CARDS
-analyst_CL_card = dbc.Card([
-                            dbc.CardHeader(
-                                [
-                                    html.Div("Select Columns:"),
-                                ]
-                            ),
-                            dbc.CardBody(
-                                dbc.Row([
-                                        dbc.Col([analystChecklist ])]))],
-                            style={
-                                'width':  "100%", "display": 'flex', "align-items":"right", "justify-content":"right",
-                                "background": "dark",
-                            },)
+analyst_CL_card = CL_in_card(analystChecklist,Cl_card_style )
+growers_CL_card =CL_in_card(growersChecklist,Cl_card_style )
+healthiest_CL_card = CL_in_card(healthiestChecklist,Cl_card_style )
+discount_CL_card = CL_in_card(discountChecklist,Cl_card_style )
+indicator_CL_card = CL_in_card(indicatorChecklist,Cl_card_style )
 
 # filterCard = dbc.Card(
 #     dbc.CardBody(
@@ -130,10 +122,10 @@ table_filters=dbc.Row([
     dbc.Col(sectorSelect, width=10)
 ])
 
-healthiest_content=dbc.Row([dbc.Col(healthiestChecklist, width=2),dbc.Col(healthiestTable, width=10)])
+healthiest_content=dbc.Row([dbc.Col(healthiest_CL_card, width=2),dbc.Col(healthiestTable, width=10)])
 analyst_content=dbc.Row([dbc.Col(analyst_CL_card, width=2),dbc.Col(analystTable, width=10)])
-discount_content=dbc.Row([dbc.Col(discountChecklist, width=2),dbc.Col(discountTable, width=10)])
-growers_content=dbc.Row([dbc.Col(growersChecklist, width=2),dbc.Col(growersTable, width=10)])
+discount_content=dbc.Row([dbc.Col(discount_CL_card, width=2),dbc.Col(discountTable, width=10)])
+growers_content=dbc.Row([dbc.Col(growers_CL_card, width=2),dbc.Col(growersTable, width=10)])
 
 
 #PAGE CONTENT SHORTCUTS
@@ -168,7 +160,7 @@ analysisPage = [
 candlestickPage = [
     dbc.Row([
         dbc.Col(dcc.Graph(id="candleStick",config={'displayModeBar': False}), width=10),
-        dbc.Col(indicatorChecklist, width=2),
+        dbc.Col(indicator_CL_card, width=2),
         ]),
     # dbc.Row([
     #     dbc.Col(dcc.Graph(id="test"), width=10)

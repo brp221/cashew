@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-POSTGRESQL HELPERS
-
+POSTGRESQL FETCHERS
 Created on Sun Apr 17 21:20:16 2022
-
 @author: bratislavpetkovic
 """
 from sqlalchemy import column
@@ -12,11 +8,13 @@ from sqlalchemy import create_engine
 # from sqlalchemy import select
 from sqlalchemy import table
 import pandas as pd
+import sys
+sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 # CONNECT TO DB
 DATABASE_URL = "postgresql://rhrqiookrgcrnz:fcd238d060c40424f6e05b4ca28b9a07126e0a29a76eb1c4f3c83530a044174b@ec2-34-194-73-236.compute-1.amazonaws.com:5432/d4nvq9ol4b3f2k"
 engine = create_engine(DATABASE_URL, echo = False)
-print(engine.execute("SELECT * FROM \"analyst_rating\" ").fetchone())
+# print(engine.execute("SELECT * FROM \"analyst_rating\" ").fetchone())
 
 def fetch_symbol_metadata():
     # METADATA

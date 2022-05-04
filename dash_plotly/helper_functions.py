@@ -21,6 +21,8 @@ import plotly.graph_objects as go
 
 import pandas as pd
 from datetime import datetime
+import sys
+sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -32,7 +34,7 @@ def health_preparer(df):
     df["rank_piotroski"] =  df["piotroskiScore"].rank(pct=True)
     df["rank_DE"] =  df["debtEquityRatio"].rank(ascending=False, pct=True)
     df["rank_overall_hc"] = ((0.25* df["rank_ROA"]) + (0.25* df["rank_ROE"]) + (0.25* df["rank_piotroski"]) + (0.25* df["rank_DE"]))
-    # print("health_preparer : ", len(df))
+    print("rank_overall_hc : ", df["rank_overall_hc"])
     return df
 
 def discount_preparer(df):
@@ -59,22 +61,13 @@ def growers_preparer(df):
     return df
 
 def analyst_rating_preparer(df):
-    df["rank_overall_ar"] = df.AnalystRating
-    # print("analyst_rating_preparer : ", len(df))
+    df["rank_overall_ar"] =  df["AnalystRating"].rank(pct=True)
+    print("rank_overall_ar:",df["rank_overall_ar"])
     return df
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-# df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv') # replace with your own data source
-# fig = go.Figure(go.Candlestick(
-#     x=df['Date'],
-#     open=df['AAPL.Open'],
-#     high=df['AAPL.High'],
-#     low=df['AAPL.Low'],
-#     close=df['AAPL.Close']
-# ))
 
 
 

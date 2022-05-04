@@ -95,3 +95,9 @@ def create_checklist(ID, all_choices, chosen_choices, listStyle):
     #     ),
     
     return checklist
+
+def CL_in_card(checklist, providedStyle):
+    card = dbc.Card([dbc.CardHeader([html.Div("Select Columns:")]),
+                                dbc.CardBody(dbc.Row([dbc.Col([checklist])]))],
+                                style=providedStyle)
+    return card
