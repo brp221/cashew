@@ -12,36 +12,20 @@ sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
 
 LOGO_1 = "https://img.freepik.com/free-vector/cashew-nut-vector-illustration-concept-design-templatecashew_598213-23.jpg?w=1380"
 LOGO_2 = "https://img.freepik.com/free-vector/cashew-nut-vector-illustration-concept-design-templatecashew_598213-70.jpg?w=2000"
-
-navbar = dbc.NavbarSimple(
-    children=[
-        dbc.DropdownMenu(
-            children=[
-                dbc.DropdownMenuItem("DataDiscovery", href="#"),
-                dbc.DropdownMenuItem("Fishing", href="#"),
-                dbc.DropdownMenuItem("Analysis", href="#"),
-            ],
-            nav=True,
-            in_navbar=True,
-            label="Explore",
-        ),
-    ],
-    brand="CASHEW - Investing & Data Dicovery Tool",
-    brand_href="#",
-    color="dark",
-    dark=True,
-)
+CASHEW_JAR="https://lh3.googleusercontent.com/TpFFMagmFkjddl13xGU38ZXH8SQ__g8c1Z2AJwfEvjgLSuTb6H-DVYzasLNeBuQzQZrEikRHMJ_OI5IQYjSQITP7gKtKt5pKFWqjgpgd11kr41Pxy66oV3qoPLAnhGpKJlOGGdGNZLo=w2400"
+CASHEW_JAR_CIRCLE="https://lh3.googleusercontent.com/_1qfDVO4jBGVyHLpyvGw_GyVTIziSPVmytFj0YB0Z1Mjct1DOL-XPa09G1_3TOFvfH_vNHn_vFvbqJUZxkQ4kOkzJFUP579GUKNR6yZYdka6qZgIhcwhB6WB8gchPGpsxiXSoNJiFeI=s263-p-k"
 
 navbar = dbc.Navbar(
+    [dbc.Col(html.Plaintext("     ")),
+     html.Img(src=CASHEW_JAR_CIRCLE, height="100px", width = "100px"),
     dbc.Container(
-        [
-            html.A(
+        [  html.A(
                 # Use row and col to control vertical alignment of logo / brand
                 dbc.Row(
-                    [   dbc.Col(html.Plaintext("                                                 ")),
-                        dbc.Col(html.Img(src=LOGO_1, height="90px", width = "90px")),
+                    [   dbc.Col(html.Plaintext("     ")),
+                        # dbc.Col(html.Img(src=CASHEW_JAR_CIRCLE, height="90px", width = "90px")),
                         dbc.Col(html.Plaintext("    ")),
-                        dbc.Col(dbc.NavbarBrand("            CASHEW ™", class_name="ms-2")),
+                        dbc.Col(dbc.NavbarBrand("            CASHEW ™", class_name="ls-2")),
                     ],
                     align="center",
                     class_name="g-0",
@@ -60,12 +44,11 @@ navbar = dbc.Navbar(
             #     navbar=True,
             # ),
         ],
-    ),
+    )],
     color="primary",
     dark=True,
     className="mb-5",
 )
-
 
 
 def create_table(ID, df, columns_chosen,data_style, conditional_data_style):
@@ -82,22 +65,16 @@ def create_single_dropdown(ID, all_columns, chosen_columns, column_style):
     return dropdown
 
 def create_checklist(ID, all_choices, chosen_choices, listStyle):
-    checklist = dcc.Checklist(all_choices, chosen_choices, id = ID, labelStyle=listStyle)
-    
-    # checklist = dbc.Checklist(
-    #         id="checklist-selected-style",
-    #         options=all_choices,
-    #         label_checked_style={"color": "red"},
-    #         input_checked_style={
-    #             "backgroundColor": "#fa7268",
-    #             "borderColor": "#ea6258",
-    #         },
-    #     ),
-    
+    checklist = dcc.Checklist(all_choices, chosen_choices, id = ID, labelStyle=listStyle)    
     return checklist
 
-def CL_in_card(checklist, providedStyle):
-    card = dbc.Card([dbc.CardHeader([html.Div("Select Columns:")]),
+def create_dbc_checklist(ID, all_choices, chosen_choices, listStyle):
+    checklist = dbc.Checklist(id=ID,options=all_choices,label_checked_style={"color": "red"},
+                              input_checked_style=listStyle,),
+    return checklist
+
+def CL_in_card(checklist, providedStyle, text):
+    card = dbc.Card([dbc.CardHeader([html.Div(text)]),
                                 dbc.CardBody(dbc.Row([dbc.Col([checklist])]))],
                                 style=providedStyle)
     return card

@@ -5,6 +5,7 @@ REFERENCES
 (2) STYLE : https://towardsdatascience.com/create-a-professional-dasbhoard-with-dash-and-css-bootstrap-e1829e238fc5
             https://dash-bootstrap-components.opensource.faculty.ai/docs/components/layout/
             https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/
+            https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction
             
 (3) SESSION : https://dash.plotly.com/dash-core-components/store
 
@@ -12,3 +13,7 @@ REFERENCES
             https://www.pinterest.com/pin/50947039524213245/
             https://www.pinterest.com/pin/599963981613201834/
             https://www.freepik.com/premium-vector/cashew-nut-vector-illustration-concept-design-templatecashew_22960243.htm#query=cashew%20logo&position=21&from_view=keyword
+            https://www.canva.com/design/DAE_3BtH2vM/jXTcQKOh1yxfONalJJ4qig/edit#
+            
+(5) APIs :
+            https://github.com/daxm/fmpsdk/blob/master/fmpsdk/technical_indicators.py

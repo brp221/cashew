@@ -51,9 +51,20 @@ def scatter_wrapper( table1, table2):
     	         size="marketCap", color="sector", template='simple_white',
                      hover_name="Symbol", log_x=True, size_max=60)
     
-    # fig.update_layout(
-    #     width=1100, height = 700 
-    # )
+    fig.update_layout(
+        width=1400, height = 600, autosize=False,
+        xaxis = dict(
+        tickmode = 'array',
+        tickvals = [0, 0.5, 1.0]
+    ),
+    yaxis = dict(
+        tickmode = 'array',
+        tickvals = [0, 0.5, 1.0]
+    ))
+    fig.update_yaxes(
+    scaleanchor = "x",
+    scaleratio = 1,
+  )
     #fig.show()
     return fig
     
@@ -115,10 +126,10 @@ def quarter_earnings_wrapper(symbol):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x1, y=y1,
                         mode='lines+markers',
-                        name='Revenue'))
+                        name='NetIncome'))
     fig.add_trace(go.Scatter(x=x2, y=y2,
                          mode='lines+markers',
-                         name='NetIncome'))
+                         name='Revenue'))
     fig.update_layout( 
         width=500,height=420,
         legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1)

@@ -25,6 +25,7 @@ from ui_styles import *
 from callback_wrapper import *
 from select_options import * 
 from components_wrapper import *
+from portfolio_generator import *
 
 symbol_metadata_df = fetch_symbol_metadata() # METADATA
 
@@ -46,7 +47,6 @@ del healthiest_companies_metadata_df["price"]
 
 sectors = list(symbol_metadata_df.sector.unique())
 sectors.remove('')
-# tables = ['Analyst Rating', 'Best Value', 'Biggest Growth', 'Healthiest']
 
 # TABLES
 analystTable = create_table("DT_analysts", analyst_rating_metadata_df, analyst_rating_chosen, dt_style, analyst_dt_style)
@@ -58,7 +58,6 @@ growersTable = create_table("DT_growers", biggest_growers_metadata_df, biggest_g
 table1Choice = dbc.RadioItems(options=tableOptions,value=tables[0],id="table1",inline=True)
 table2Choice = dbc.RadioItems(options=tableOptions,value=tables[1],id="table2",inline=True)
         
-
 #CHECKLISTS
 analystChecklist = create_checklist("analystChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'block'})
 healthiestChecklist = create_checklist("healthiestChecklist", healthiest_companies_metadata_df.columns, healthiest_chosen, {'display': 'block'})
@@ -66,7 +65,8 @@ discountChecklist = create_checklist("discountChecklist", best_value_metadata_df
 growersChecklist = create_checklist("growersChecklist", biggest_growers_metadata_df.columns, biggest_growers_chosen, {'display': 'block'})
 indicatorChecklist = create_checklist("indicatorChecklist", indicators_all, indicators_chosen, {'display': 'block', })
 # timeframeChecklist = create_radio("timeframeChecklist", indicators_all, indicators_chosen, {'display': 'inline-block','fontSize':10})
-
+tablesChecklist = create_checklist("tablesChecklist", tables, tablesChosen, {'display': 'inline', })
+sectorChecklist = create_checklist("sectorChecklist", sectors, sectors, {'display': 'block', })
 
 #DROPDOWN
 sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'marginRight':100, 'height':80  })
@@ -78,14 +78,19 @@ symbolSector = symbol_metadata_df[symbol_metadata_df["Symbol"]==randSymbol]["sec
 peerSymbolChosen = symbol_metadata_df[symbol_metadata_df["sector"]==symbolSector]["Symbol"].values[0]
 searchSymbol = dbc.Input(id="stockSymbol", placeholder="symbol", type="text", value=randSymbol,size="sm", style={"width": 100, "height": 30})
 peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value=peerSymbolChosen, size="sm", style={"width": 100, "height": 30})
-
+investmentAmountGroup = dbc.InputGroup([dbc.InputGroupText("$",style={"height": 30,"marginTop":10}),
+                                        dbc.Input(id="investmentAmount",type="number", placeholder="wallet size", min=0, max=100000, step=10, size="sm", style={"width": 140, "height": 30,"marginTop":10}),
+                                        dbc.InputGroupText(".00",style={"height": 30,"marginTop":10}),],className="mb-3",)
+portfolioSize = dbc.Input(id="portfolioSize",type="number", min=0, max=12,placeholder="# of stocks", step=1,size="sm", style={"width": 110, "height": 30,"marginTop":10}),
 
 #CARDS
-analyst_CL_card = CL_in_card(analystChecklist,Cl_card_style )
-growers_CL_card =CL_in_card(growersChecklist,Cl_card_style )
-healthiest_CL_card = CL_in_card(healthiestChecklist,Cl_card_style )
-discount_CL_card = CL_in_card(discountChecklist,Cl_card_style )
-indicator_CL_card = CL_in_card(indicatorChecklist,Cl_card_style )
+analyst_CL_card = CL_in_card(analystChecklist,Cl_card_style,"Columns:" )
+growers_CL_card =CL_in_card(growersChecklist,Cl_card_style,"Columns:" )
+healthiest_CL_card = CL_in_card(healthiestChecklist,Cl_card_style,"Columns:" )
+discount_CL_card = CL_in_card(discountChecklist,Cl_card_style,"Columns:" )
+indicator_CL_card = CL_in_card(indicatorChecklist,Cl_card_style,"Columns:" )
+tables_CL_card = CL_in_card(tablesChecklist, Cl_card_style_horizontal,"Data:")
+sectors_CL_card = CL_in_card(sectorChecklist, Cl_card_style,"Sectors:")
 
 # filterCard = dbc.Card(
 #     dbc.CardBody(
@@ -166,8 +171,21 @@ candlestickPage = [
     #     dbc.Col(dcc.Graph(id="test"), width=10)
     #     ])
     ]
+portfolioGenPage = dbc.Container([
+    dbc.Row([
+        dbc.Col(investmentAmountGroup, width=3),
+        dbc.Col(portfolioSize, width=3),
+        dbc.Col(tables_CL_card, width=6),
+        ]),
+    dbc.Row([
+        dbc.Col(sectors_CL_card, width=2),
+        # dbc.Col(sectorChecklist, width=3),
+        # dbc.Col(tables_CL_card, width=6),
+        ])
+    ])
 
-#APP 
+
+#-------------------------------------------APP--------------------------------------------------------
 app = Dash(
     external_stylesheets = [dbc.themes.PULSE], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
     suppress_callback_exceptions=True) 
@@ -180,10 +198,13 @@ app.layout = dbc.Container(
             dbc.Tab(researchPage,label="RESEARCH", tab_id="Research"),
             dbc.Tab(analysisPage,label="PROFILE", tab_id="Analysis"),
             dbc.Tab(candlestickPage,label="PRICE", tab_id="Candlestick"),
+            dbc.Tab(portfolioGenPage,label="PORTFOLIO", tab_id="PortfolioGenerator"),
         ],id="tabs", active_tab="Tables",
     ),
     # html.Div(id="tab-content", className="p-4", children=tablesPage),
 ])
+#------------------------------------------------------------------------------------------------------
+
 
 @app.callback(
     Output("tabs", "children"),
@@ -205,8 +226,21 @@ def update_tables_page(value):
         dbc.Tab(researchPage,label="RESEARCH", tab_id="Research"),
         dbc.Tab(analysisPage,label="PROFILE", tab_id="Analysis"),
         dbc.Tab(candlestickPage,label="PRICE", tab_id="Candlestick"),
+        dbc.Tab(portfolioGenPage,label="PORTFOLIO", tab_id="PortfolioGenerator"),
     ]
     return allTabsChildren, value
+
+# @app.callback(
+#     ,
+#     Input("tablesChecklist", "value"),
+#     Input("investmentAmount", "value"),
+#     Input("portfolioSize", "value"))
+# def portfolio_generator():
+#     #categorize data by tables. E.g. stock x is a growth stock
+#     # Provide link to company website, eases research , #provide company logo as well
+#     investment_type
+
+
 
 #     tableContent=[]
 #     if(tableSelected=='Analyst Rating'):
