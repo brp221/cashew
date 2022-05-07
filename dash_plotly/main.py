@@ -91,6 +91,8 @@ discount_CL_card = CL_in_card(discountChecklist,Cl_card_style,"Columns:" )
 indicator_CL_card = CL_in_card(indicatorChecklist,Cl_card_style,"Columns:" )
 tables_CL_card = CL_in_card(tablesChecklist, Cl_card_style_horizontal,"Data:")
 sectors_CL_card = CL_in_card(sectorChecklist, Cl_card_style,"Sectors:")
+mockCard = create_card("AAPL",symbolCard )
+
 
 # filterCard = dbc.Card(
 #     dbc.CardBody(
@@ -171,23 +173,38 @@ candlestickPage = [
     #     dbc.Col(dcc.Graph(id="test"), width=10)
     #     ])
     ]
+
+
+
+
+layout = html.Div([
+    dbc.Row([
+        dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3),
+    ]),
+    dbc.Row([
+        dbc.Col([mockCard]), dbc.Col([mockCard]), dbc.Col([mockCard])
+    ]),
+],id = "layout")
+
+
 portfolioGenPage = dbc.Container([
     dbc.Row([
         dbc.Col(investmentAmountGroup, width=3),
         dbc.Col(portfolioSize, width=3),
-        dbc.Col(tables_CL_card, width=6),
+        dbc.Col(tables_CL_card, width=4),
+        dbc.Col(dbc.Button("Generate", color="primary", className="me-1", id="genPortfolio",style={"marginTop":12}), width=2),
+        
         ]),
     dbc.Row([
         dbc.Col(sectors_CL_card, width=2),
-        # dbc.Col(sectorChecklist, width=3),
-        # dbc.Col(tables_CL_card, width=6),
+        dbc.Col(layout, width=10)
         ])
-    ])
+    ], id ="portfolioContainer")
 
 
 #-------------------------------------------APP--------------------------------------------------------
 app = Dash(
-    external_stylesheets = [dbc.themes.PULSE], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
+    external_stylesheets = [dbc.themes.ZEPHYR], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
     suppress_callback_exceptions=True) 
 app.layout = dbc.Container(
 [   
@@ -230,29 +247,54 @@ def update_tables_page(value):
     ]
     return allTabsChildren, value
 
-# @app.callback(
-#     ,
-#     Input("tablesChecklist", "value"),
-#     Input("investmentAmount", "value"),
-#     Input("portfolioSize", "value"))
-# def portfolio_generator():
-#     #categorize data by tables. E.g. stock x is a growth stock
-#     # Provide link to company website, eases research , #provide company logo as well
-#     investment_type
+@app.callback(
+    Output("layout", "children"),
+    [Input("genPortfolio", "n_clicks"),
+    Input("tablesChecklist", "value"),
+    Input("sectorChecklist", "value"),
+    Input("investmentAmount", "value"),
+    Input("portfolioSize", "value")])
+def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,portfolioSize):
+    #categorize data by tables. E.g. stock x is a growth stock
+    # Provide link to company website, eases research , #provide company logo as well
+    print("n_clicks:", n_clicks)
+    print("tablesChecklist:", tablesChecklist)
+    print("sectorChecklist:",sectorChecklist)
+    print("investmentAmount:", investmentAmount)
+    print("portfolioSize:", portfolioSize)
+    dict_df = {}
+    if('Analyst Rating' in tablesChecklist):
+        dict_df['Analyst Rating']=analyst_rating_metadata_df
+    if('Healthiest' in tablesChecklist):
+        dict_df['Healthiest']=healthiest_companies_metadata_df
+    if('Best Value' in tablesChecklist):
+        dict_df['Best Value' ]=best_value_metadata_df
+    if('Biggest Growth' in tablesChecklist):
+        dict_df['Biggest Growth' ]=biggest_growers_metadata_df
+    # works only for analystRating and Healthiest currently 
+    print("dict size:", len(dict_df))
+    print("dict_df[Analyst Rating]", dict_df["Analyst Rating"].head())
+    print("dict_df[Healthiest]", dict_df["Healthiest"].head())
+    tables_set_df = investment_type(dict_df)
+    print("tables_set_df", tables_set_df.head())
+    print("tables_set_df", len(tables_set_df))
+    print("tables_set_df", tables_set_df.columns)
+    print("tables_set_df", tables_set_df.dtypes)
+    print("sectorChecklist", type(sectorChecklist))
+    print("tables_set_df", type(tables_set_df))
+    #             portfolio_generator(df, risk_level, diversification_level, preferred_sectors, investment_amount)
+    portfolioDF = portfolio_generator(tables_set_df, "comingSoon", "low", sectorChecklist, 100000)
+    print("portfolioDF head",portfolioDF.head())
+    layoutChild = [
+        dbc.Row([
+            dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3),
+        ]),
+        dbc.Row([
+            dbc.Col([mockCard]), dbc.Col([mockCard]), dbc.Col([mockCard])
+        ])]
+    
+    return layoutChild
 
-
-
-#     tableContent=[]
-#     if(tableSelected=='Analyst Rating'):
-#         tableContent=dbc.Row([dbc.Col(analystChecklist, width=2),dbc.Col(analystTable, width=10)])
-#     elif(tableSelected=="Best Value"):
-#         tableContent=dbc.Row([dbc.Col(discountChecklist, width=2),dbc.Col(discountTable, width=10)])
-#     elif(tableSelected=="Biggest Growth"):
-#         tableContent=dbc.Row([dbc.Col(growersChecklist, width=2),dbc.Col(growersTable, width=10)])
-#     elif(tableSelected=="Healthiest"):
-#         tableContent=dbc.Row([dbc.Col(healthiestChecklist, width=2),dbc.Col(healthiestTable, width=10)])
-#     tablesPage = [dbc.Row([dbc.Col(tableSelect, width=2),dbc.Col(sectorSelect, width=10)]),tableContent]
-#     return tablesPage
 @app.callback(
     Output("table1", "options"),
     Input("table2", "value"))

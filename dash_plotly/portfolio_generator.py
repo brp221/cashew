@@ -7,28 +7,13 @@ Created on Tue May  3 11:21:35 2022
 """
 from helper_functions import *
 import pandas as pd 
-#INPUTS:
-    #diversification_level : low, medium, high
-        # for high include crypto perhaps?
-    #investment_style : 1 one of the 4 tables potentially, or 2 of the tables combined w another table sucha s health and/or analyst rating 
-                #perhaps factorized 1 means BG 2 means BV , 3 means BG.Join(AR), 4 means BV.Join(HC) ... DEF a helper function or data preparer function
 
-    #risk_level : altmanZthreshhold / O-score ---> low,medium,high
-        # O-score using https://en.wikipedia.org/wiki/Ohlson_O-score#:~:text=The%20Ohlson%20O%2Dscore%20for,score%20for%20predicting%20financial%20distress. 
-    #preferred_sectors: sectors to filter by ( break norm if insufficient)
-    #investment_amount: to be a helper function to main generator function. 
-        # used to calculate weight of each company in the stock. 
-        # intuitively, best stocks will hold the most weight. Figure out some distribution e.g. 
-            # E.G. :out of 8 stocks the weight of 1st stock will be 8/ epsiolon(1 to 8), 
-                                        #weight of 2nd stock will be 7/ epsilon(1 to 8),
-            # Round to nearest stock if that stock is below a certain threshhold 
-    
-#ALGO:
-
-    #OUTPUT SHOULD BE A DICTIONARY 4 CARD FORMAT, EACH STOCK NEEDS TO BE BOUGHT NEEDS TO LOCK FANCY & DIVINE 
-
-def portfolio_generator(df, risk_level, diversification_level, preferred_sectors, investment_amount, investment_style):
+def portfolio_generator(df, risk_level, diversification_level, preferred_sectors, investment_amount):
     # 0. DATA MASSAGING AND SETUP
+    print("risk_level", risk_level)
+    print("diversification_level", diversification_level)
+    print("preferred_sectors", preferred_sectors)
+    print("investment_amount", investment_amount)
     portfolio_size = [5]
     if(diversification_level=="low"):
         portfolio_size = [4,5,6]
@@ -37,7 +22,7 @@ def portfolio_generator(df, risk_level, diversification_level, preferred_sectors
     if(diversification_level=="high"):
         portfolio_size = [9,10,11]
         return portfolio_size
-    df_new = df_portfolio.loc[df_portfolio["sector"].isin(preferred_sectors),]
+    df_new = df.loc[df["sector"].isin(preferred_sectors),]
     
     # 1. JOIN DATA, COMPUTE RANKS AND SORT BY BEST RANK
     # print("rank_overall_ar:", df_new["rank_overall_ar"] )
@@ -75,10 +60,10 @@ def portfolio_generator(df, risk_level, diversification_level, preferred_sectors
     return totalDF
     
 # # helper function to join the given tables and then to rank them according to 2-3 categories?
-def investment_type(list_df):
+def investment_type(dict_df):
     #COMPUTE RANKS using df preparers
-    df_x = analyst_rating_preparer(list_df[0])
-    df_y = health_preparer(list_df[1])
+    df_x = analyst_rating_preparer(dict_df["Analyst Rating"])
+    df_y = health_preparer(dict_df["Healthiest"])
     df = df_x.merge(df_y)
     
     print("investment_type result: ",df.head())

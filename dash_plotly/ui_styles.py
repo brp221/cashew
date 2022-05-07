@@ -187,3 +187,5 @@ healthiest_dt_style=[
 
 Cl_card_style={'width':  "100%", "display": 'flex', "flexDirection":"column","background": "dark"}
 Cl_card_style_horizontal={"height": 30,'width':  "100%", "display": 'inline-flex', "flexDirection":"row","background": "dark", "marginTop":10}
+
+symbolCard={"width": 200, "height": 200, "marginLeft":12, "marginTop":12}
