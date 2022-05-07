@@ -7,7 +7,6 @@ astroid==2.6.6
 asttokens==2.0.5
 atomicwrites==1.4.0
 attrs==21.4.0
-autopep8==1.6.0
 Babel==2.9.1
 backcall==0.2.0
 beautifulsoup4==4.10.0
@@ -40,7 +39,6 @@ entrypoints==0.3
 et-xmlfile==1.1.0
 executing==0.8.3
 fastjsonschema==2.15.1
-flake8==3.9.2
 Flask==2.1.1
 Flask-Compress==1.11
 fmpsdk==20220405.0
@@ -120,14 +118,12 @@ pyzmq==22.3.0
 QDarkStyle==3.0.2
 qstylizer==0.1.10
 QtAwesome==1.0.3
-qtconsole==5.3.0
 QtPy==2.0.1
 regex==2022.3.15
 requests==2.27.1
 rope==0.22.0
 Rtree==0.9.7
 setuptools==61.2.0
-sip==4.19.13
 six==1.16.0
 snowballstemmer==2.2.0
 sortedcontainers==2.4.0
@@ -139,8 +135,6 @@ sphinxcontrib-htmlhelp==2.0.0
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.5
-spyder==5.1.5
-spyder-kernels==2.1.3
 SQLAlchemy==1.4.35
 stack-data==0.2.0
 tenacity==8.0.1
