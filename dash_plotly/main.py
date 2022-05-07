@@ -71,7 +71,7 @@ sectorChecklist = create_checklist("sectorChecklist", sectors, sectors, {'displa
 #DROPDOWN
 sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'marginRight':100, 'height':80  })
 tableSelect =  create_single_dropdown("tableSelect", tables, 'Healthiest',{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'height':40, 'width':200 })
-
+portfolioSize = create_single_dropdown("portfolioSize", ["low", "medium", "high"], "low", {'display': 'inline-block','marginTop':5, 'width':200})
 #SEARCH
 randSymbol = symbol_metadata_df.Symbol[randint(1,100)]
 symbolSector = symbol_metadata_df[symbol_metadata_df["Symbol"]==randSymbol]["sector"].values[0]
@@ -81,7 +81,7 @@ peerSymbol = dbc.Input(id="peerSymbol", placeholder="symbol", type="text", value
 investmentAmountGroup = dbc.InputGroup([dbc.InputGroupText("$",style={"height": 30,"marginTop":10}),
                                         dbc.Input(id="investmentAmount",type="number", placeholder="wallet size", min=0, max=100000, step=10, size="sm", style={"width": 140, "height": 30,"marginTop":10}),
                                         dbc.InputGroupText(".00",style={"height": 30,"marginTop":10}),],className="mb-3",)
-portfolioSize = dbc.Input(id="portfolioSize",type="number", min=0, max=12,placeholder="# of stocks", step=1,size="sm", style={"width": 110, "height": 30,"marginTop":10}),
+# portfolioSize = dbc.Input(id="portfolioSize",type="number", min=0, max=12,placeholder="# of stocks", step=1,size="sm", style={"width": 110, "height": 30,"marginTop":10}),
 
 #CARDS
 analyst_CL_card = CL_in_card(analystChecklist,Cl_card_style,"Columns:" )
@@ -91,23 +91,7 @@ discount_CL_card = CL_in_card(discountChecklist,Cl_card_style,"Columns:" )
 indicator_CL_card = CL_in_card(indicatorChecklist,Cl_card_style,"Columns:" )
 tables_CL_card = CL_in_card(tablesChecklist, Cl_card_style_horizontal,"Data:")
 sectors_CL_card = CL_in_card(sectorChecklist, Cl_card_style,"Sectors:")
-mockCard = create_card("AAPL",symbolCard )
-
-
-# filterCard = dbc.Card(
-#     dbc.CardBody(
-#         [
-#             marketCapSlider,
-#             tableSelect
-#         ]
-#     ),
-#     style={
-        
-#         "border-radius": "2%",
-#         "background": "secondary",
-#     },
-# )
-
+mockCard = create_card("BABA",symbolCard )
 radarCard = dbc.Card(
     dbc.CardBody(
         [
@@ -191,8 +175,8 @@ portfolioGenPage = dbc.Container([
     dbc.Row([
         dbc.Col(investmentAmountGroup, width=3),
         dbc.Col(portfolioSize, width=3),
-        dbc.Col(tables_CL_card, width=4),
         dbc.Col(dbc.Button("Generate", color="primary", className="me-1", id="genPortfolio",style={"marginTop":12}), width=2),
+        dbc.Col(tables_CL_card, width=4),
         
         ]),
     dbc.Row([
@@ -257,10 +241,6 @@ def update_tables_page(value):
 def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,portfolioSize):
     #categorize data by tables. E.g. stock x is a growth stock
     # Provide link to company website, eases research , #provide company logo as well
-    print("n_clicks:", n_clicks)
-    print("tablesChecklist:", tablesChecklist)
-    print("sectorChecklist:",sectorChecklist)
-    print("investmentAmount:", investmentAmount)
     print("portfolioSize:", portfolioSize)
     dict_df = {}
     if('Analyst Rating' in tablesChecklist):
@@ -276,22 +256,10 @@ def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,port
     print("dict_df[Analyst Rating]", dict_df["Analyst Rating"].head())
     print("dict_df[Healthiest]", dict_df["Healthiest"].head())
     tables_set_df = investment_type(dict_df)
-    print("tables_set_df", tables_set_df.head())
-    print("tables_set_df", len(tables_set_df))
-    print("tables_set_df", tables_set_df.columns)
-    print("tables_set_df", tables_set_df.dtypes)
-    print("sectorChecklist", type(sectorChecklist))
-    print("tables_set_df", type(tables_set_df))
     #             portfolio_generator(df, risk_level, diversification_level, preferred_sectors, investment_amount)
-    portfolioDF = portfolio_generator(tables_set_df, "comingSoon", "low", sectorChecklist, 100000)
+    portfolioDF = portfolio_generator(tables_set_df, "comingSoon", portfolioSize, sectorChecklist, 100000)
     print("portfolioDF head",portfolioDF.head())
-    layoutChild = [
-        dbc.Row([
-            dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3),
-        ]),
-        dbc.Row([
-            dbc.Col([mockCard]), dbc.Col([mockCard]), dbc.Col([mockCard])
-        ])]
+    layoutChild=create_card_layout(portfolioDF,symbolCard)
     
     return layoutChild
 

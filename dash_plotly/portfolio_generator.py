@@ -54,12 +54,10 @@ def portfolio_generator(df, risk_level, diversification_level, preferred_sectors
     totalDF["quantity"] = totalDF["totalDollars"]/totalDF["price"]
     #5. GET PRICE TARGETS SO THAT CLIENT KNOWS WHEN TO SELL ( give client ability to filter price targets by newsPublisher and timeframe?)
     # /api/v4/price-target?symbol=AAPL
-    # helper FUNCTION
-    
-    # 
+    # helper FUNCTION comingSoon
     return totalDF
     
-# # helper function to join the given tables and then to rank them according to 2-3 categories?
+# helper function to join the given tables and then to rank them according to 2-3 categories?
 def investment_type(dict_df):
     #COMPUTE RANKS using df preparers
     df_x = analyst_rating_preparer(dict_df["Analyst Rating"])
