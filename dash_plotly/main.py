@@ -27,6 +27,7 @@ from select_options import *
 from components_wrapper import *
 from portfolio_generator import *
 
+
 symbol_metadata_df = fetch_symbol_metadata() # METADATA
 
 analyst_rating_df = fetch_analyst_rating() # ANALYST RATING

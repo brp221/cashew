@@ -85,7 +85,7 @@ def CL_in_card(checklist, providedStyle, text):
                                 style=providedStyle)
     return card
 
-def create_card(symbol, card_style):
+def create_card(symbol, card_style): 
     url = ("https://financialmodelingprep.com/api/v3/profile/"+symbol+"?apikey=ce687b3fe0554890e65d6a5e48f601f9")
     profileDF = pd.DataFrame.from_dict(get_jsonparsed_data(url))
     print("symbol: ",symbol)
