@@ -66,13 +66,15 @@ discountChecklist = create_checklist("discountChecklist", best_value_metadata_df
 growersChecklist = create_checklist("growersChecklist", biggest_growers_metadata_df.columns, biggest_growers_chosen, {'display': 'block'})
 indicatorChecklist = create_checklist("indicatorChecklist", indicators_all, indicators_chosen, {'display': 'block', })
 # timeframeChecklist = create_radio("timeframeChecklist", indicators_all, indicators_chosen, {'display': 'inline-block','fontSize':10})
-tablesChecklist = create_checklist("tablesChecklist", tables, tablesChosen, {'display': 'inline', })
+tablesChecklist = create_checklist("tablesChecklist", tables, tablesChosen, {'display': 'inline-block', })
 sectorChecklist = create_checklist("sectorChecklist", sectors, sectors, {'display': 'block', })
 
 #DROPDOWN
 sectorSelect = create_dropdown("sectorSelect", sectors, sectors,{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'marginRight':100, 'height':80  })
 tableSelect =  create_single_dropdown("tableSelect", tables, 'Healthiest',{'display': 'inline-block', 'marginLeft':-20, 'marginTop':8,'height':40, 'width':200 })
 portfolioSize = create_single_dropdown("portfolioSize", ["low", "medium", "high"], "low", {'display': 'inline-block','marginTop':5, 'width':200})
+portfolioTables = create_dropdown("portfolioTables", tables, tablesChosen,{'display': 'inline-block','height':40, 'width':450, 'marginTop':5  })
+
 #SEARCH
 randSymbol = symbol_metadata_df.Symbol[randint(1,100)]
 symbolSector = symbol_metadata_df[symbol_metadata_df["Symbol"]==randSymbol]["sector"].values[0]
@@ -113,11 +115,19 @@ table_filters=dbc.Row([
     dbc.Col(tableSelect, width=2),
     dbc.Col(sectorSelect, width=10)
 ])
-
 healthiest_content=dbc.Row([dbc.Col(healthiest_CL_card, width=2),dbc.Col(healthiestTable, width=10)])
 analyst_content=dbc.Row([dbc.Col(analyst_CL_card, width=2),dbc.Col(analystTable, width=10)])
 discount_content=dbc.Row([dbc.Col(discount_CL_card, width=2),dbc.Col(discountTable, width=10)])
 growers_content=dbc.Row([dbc.Col(growers_CL_card, width=2),dbc.Col(growersTable, width=10)])
+layout = html.Div([
+    # dbc.Row([
+    #     dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3),
+    # ]),
+    dbc.Row([
+        dbc.Col(dcc.Graph("pieChart"), width="auto")
+        ])
+],id = "layout")
+
 
 
 #PAGE CONTENT SHORTCUTS
@@ -158,32 +168,21 @@ candlestickPage = [
     #     dbc.Col(dcc.Graph(id="test"), width=10)
     #     ])
     ]
-
-
-
-
-layout = html.Div([
-    dbc.Row([
-        dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3), dbc.Col([mockCard],width=3),
-    ]),
-    dbc.Row([
-        dbc.Col([mockCard]), dbc.Col([mockCard]), dbc.Col([mockCard])
-    ]),
-],id = "layout")
-
-
 portfolioGenPage = dbc.Container([
     dbc.Row([
-        dbc.Col(investmentAmountGroup, width=3),
-        dbc.Col(portfolioSize, width=3),
-        dbc.Col(dbc.Button("Generate", color="primary", className="me-1", id="genPortfolio",style={"marginTop":12}), width=2),
-        dbc.Col(tables_CL_card, width=4),
+        dbc.Col(investmentAmountGroup, width="auto"),
+        dbc.Col(portfolioSize, width="auto"),
+        dbc.Col(portfolioTables, width="auto"),
+        dbc.Col(dbc.Button("Generate", color="info", className="me-1", id="genPortfolio",style={"marginTop":12}), width="auto"),
         
         ]),
     dbc.Row([
         dbc.Col(sectors_CL_card, width=2),
         dbc.Col(layout, width=10)
-        ])
+        ]),
+    # dbc.Row([
+    #     dbc.Col(dcc.Graph("pieChart"), width="auto")
+    #     ])
     ], id ="portfolioContainer")
 
 
@@ -234,8 +233,9 @@ def update_tables_page(value):
 
 @app.callback(
     Output("layout", "children"),
+    Output("pieChart", "figure"),
     [Input("genPortfolio", "n_clicks"),
-    Input("tablesChecklist", "value"),
+    Input("portfolioTables", "value"),
     Input("sectorChecklist", "value"),
     Input("investmentAmount", "value"),
     Input("portfolioSize", "value")])
@@ -259,9 +259,12 @@ def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,port
     #             portfolio_generator(df, risk_level, diversification_level, preferred_sectors, investment_amount)
     portfolioDF = portfolio_generator(tables_set_df, "comingSoon", portfolioSize, sectorChecklist, 100000)
     print("portfolioDF head",portfolioDF.head())
+    pie_df= portfolioDF[['totalDollars', 'Symbol']]
+    print("pie_df head",pie_df.head())
+    pieChart = piechart_wrapper(pie_df)
     layoutChild=create_card_layout(portfolioDF,symbolCard)
     
-    return layoutChild
+    return layoutChild,pieChart
 
 @app.callback(
     Output("table1", "options"),
@@ -357,7 +360,6 @@ def columns_table4(value, columns):
         raise PreventUpdate      
     columns = [{"name": i, "id": i, 'hideable': False} for i in value]
     return columns
-
 
 @app.callback(
     Output("scatterPlot", "figure"),

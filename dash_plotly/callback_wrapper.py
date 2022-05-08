@@ -18,6 +18,13 @@ import fmpsdk
 
 apikey = "ce687b3fe0554890e65d6a5e48f601f9"
 
+
+def piechart_wrapper(df):
+    # df.rename(columns={'share': 'totalDollars'}, inplace=True)
+    fig = px.pie(df, values='totalDollars', names='Symbol', title='Portfolio Layout')
+    fig.update_layout(template='simple_white',width=400, height = 400)
+    return fig
+
 def candlestick_wrapper(symbol, indicators):
     # incorporate control for time frame: daily, 1min 5min ... 
     print("Candlestick wrapper:"+symbol+"\n")

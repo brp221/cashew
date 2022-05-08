@@ -69,6 +69,31 @@ def ps10_skeleton(cards):
         ])]
     return layoutChild
 
+def ps11_skeleton(cards):
+    layoutChild = [
+        dbc.Row([
+            dbc.Col([cards[0]],width=3), dbc.Col([cards[1]],width=3), dbc.Col([cards[2]],width=3),dbc.Col([cards[3]],width="auto")
+        ]),
+        dbc.Row([
+            dbc.Col([cards[4]],width="auto"),dbc.Col([cards[5]],width="auto"),dbc.Col([cards[6]],width="auto"), dbc.Col([cards[7]],width="auto")
+        ]), 
+        dbc.Row([
+            dbc.Col([cards[8]],width="auto"), dbc.Col([cards[9]],width="auto"), dbc.Col([cards[10]],width="auto")
+        ])]
+    return layoutChild
+
+def ps12_skeleton(cards):
+    layoutChild = [
+        dbc.Row([
+            dbc.Col([cards[0]],width=3), dbc.Col([cards[1]],width=3), dbc.Col([cards[2]],width=3),dbc.Col([cards[3]],width="auto")
+        ]),
+        dbc.Row([
+            dbc.Col([cards[4]],width="auto"),dbc.Col([cards[5]],width="auto"),dbc.Col([cards[6]],width="auto"), dbc.Col([cards[7]],width="auto")
+        ]), 
+        dbc.Row([
+            dbc.Col([cards[8]],width="auto"), dbc.Col([cards[9]],width="auto"), dbc.Col([cards[10]],width="auto"), dbc.Col([cards[11]],width="auto")
+        ])]
+    return layoutChild
 
 layout_dict = {
                 5:ps5_skeleton,
@@ -76,7 +101,9 @@ layout_dict = {
                 7:ps7_skeleton,
                 8:ps8_skeleton,
                 9:ps9_skeleton,
-                10:ps10_skeleton
+                10:ps10_skeleton,
+                11:ps11_skeleton,
+                12:ps12_skeleton
                }    
     
     

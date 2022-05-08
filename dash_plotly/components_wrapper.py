@@ -89,13 +89,19 @@ def create_card(symbol, card_style):
     url = ("https://financialmodelingprep.com/api/v3/profile/"+symbol+"?apikey=ce687b3fe0554890e65d6a5e48f601f9")
     profileDF = pd.DataFrame.from_dict(get_jsonparsed_data(url))
     print("symbol: ",symbol)
+    priceTarget = 2000
+    selectAnalyst = create_single_dropdown((symbol+"_analyst_select"), ['xxxxxxx','yyyyyy', 'zzzzzzzzzz'], 'xxxxxxx',{'display': 'flex', 'marginLeft':1, 'marginTop':-10,'height':30, 'width':100} )
+    # targetURL = ("https://financialmodelingprep.com/api/v4/price-target?symbol="+symbol+"?apikey=ce687b3fe0554890e65d6a5e48f601f9")
+    # priceTargetDF = pd.DataFrame.from_dict(get_jsonparsed_data(targetURL))
+    # print("priceTargetDF: ", priceTargetDF)
     card = dbc.Card(
         [
             dbc.CardImg(src=profileDF["image"][0], class_name="mx-auto", top=True, style={"display":"block","width":45, "height":45, "marginTop":2}),
             dbc.CardBody(
                 [
                     html.H4(symbol, className="card-title,mx-auto"),  
-                    html.P(("$",profileDF["price"][0]),className="card-text"),
+                    html.P(("$",profileDF["price"][0], "\n","target:",priceTarget),className="card-text"),
+                    selectAnalyst,
                     dbc.CardLink(symbol, href=profileDF["website"][0]),
                 ]),
         ],style=card_style)
@@ -106,6 +112,7 @@ def create_card_layout(df,card_style):
     cards =[]
     for i in df["Symbol"]:
         cards.append(create_card(i,card_style))
+    cards.append(dcc.Graph("pieChart"))
     layout = layout_dict[len(cards)](cards)
     return layout
 

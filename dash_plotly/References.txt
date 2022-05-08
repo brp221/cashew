@@ -17,3 +17,7 @@ REFERENCES
             
 (5) APIs :
             https://github.com/daxm/fmpsdk/blob/master/fmpsdk/technical_indicators.py
+            
+(6) AUTOMATION : https://code.markedmondson.me/googleCloudRunner/articles/cloudscheduler.html
+                 https://medium.com/etnetera-activate/running-a-time-consuming-r-task-in-google-cloud-run-bbcedd2cb87b
+                 https://anderfernandez.com/en/blog/how-to-automate-r-script-on-google-cloud/

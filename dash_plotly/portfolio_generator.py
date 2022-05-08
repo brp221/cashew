@@ -21,7 +21,7 @@ def portfolio_generator(df, risk_level, diversification_level, preferred_sectors
         portfolio_size = [6,7,9]
     if(diversification_level=="high"):
         portfolio_size = [9,10,11]
-        return portfolio_size
+
     df_new = df.loc[df["sector"].isin(preferred_sectors),]
     
     # 1. JOIN DATA, COMPUTE RANKS AND SORT BY BEST RANK
@@ -53,7 +53,7 @@ def portfolio_generator(df, risk_level, diversification_level, preferred_sectors
     totalDF["totalDollars"] = weights
     totalDF["quantity"] = totalDF["totalDollars"]/totalDF["price"]
     #5. GET PRICE TARGETS SO THAT CLIENT KNOWS WHEN TO SELL ( give client ability to filter price targets by newsPublisher and timeframe?)
-    # /api/v4/price-target?symbol=AAPL
+    
     # helper FUNCTION comingSoon
     return totalDF
     

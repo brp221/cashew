@@ -23,4 +23,5 @@ PROJECT DIRECTORY ANATOMY (currently)
   
   --> Shiny Dashboard ( you can run this if you like it's just an R Shiny Application that I showed you. We can use this internally to explore data)
   
-  
+  --> dash_plotly 
+      
