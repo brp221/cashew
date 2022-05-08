@@ -241,7 +241,6 @@ def update_tables_page(value):
     Input("portfolioSize", "value")])
 def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,portfolioSize):
     #categorize data by tables. E.g. stock x is a growth stock
-    # Provide link to company website, eases research , #provide company logo as well
     print("portfolioSize:", portfolioSize)
     dict_df = {}
     if('Analyst Rating' in tablesChecklist):

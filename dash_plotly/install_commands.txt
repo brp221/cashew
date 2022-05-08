@@ -1,0 +1,22 @@
+# import fmpsdk
+# import plotly.graph_objects as go
+# import plotly.express as px
+# from sqlalchemy import table
+# from urllib.request import urlopen
+# import certifi
+# import json
+
+pip install dash 
+pip install dash_bootstrap_components
+pip install random
+pip install pandas
+pip install numpy
+pip install sys
+pip install datetime 
+pip install json 
+pip install certifi
+pip install fmpsdk
+pip install plotly 
+pip install plotly_express
+pip install urllib3
+pip install sqlalchemy
