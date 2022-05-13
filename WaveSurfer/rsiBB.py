@@ -18,7 +18,7 @@ commodityList = ["AAPL", "MSFT", "NVDA", "TSLA"]
 timeFrameList = ["1min","5min","15min","30min","1hour","4hour","daily"]
 
 time="1hour"
-symbol="AMZN"
+symbol="TSLA"
 priceURL = ("https://financialmodelingprep.com/api/v3/historical-chart/"+time+"/"+symbol+"?apikey=ce687b3fe0554890e65d6a5e48f601f9")
 url = ("https://financialmodelingprep.com/api/v3/historical-price-full/AAPL?apikey=ce687b3fe0554890e65d6a5e48f601f9")
 msft = pd.DataFrame.from_dict(get_jsonparsed_data(priceURL))
@@ -67,7 +67,7 @@ stopLossCondition = msftR[msftR["lower"]>=msftR["close"]]
 # Step #5: Take Profit when the price breaks below the lower BB
 cashInCondition = msftR[msftR["lower"]>msftR["close"]]
 bb_graph(msftR, cashInCondition["date"])
-
 #SEEMS AS THOUGH THE EXIT CONDITION IS ALWAYS THE SAME :):
+
 big_picture(msftR,condition_1["date"], condition_2["date"], stopLossCondition["date"])
 #-------------------------------------------------------------------------------------------------------------------------------------------------------
