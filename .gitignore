@@ -40,3 +40,4 @@ vignettes/*.pdf
 
 # __pycaches__
 dash_plotly/__pycache__/*
+WaveSurfer/__pycache__/*
