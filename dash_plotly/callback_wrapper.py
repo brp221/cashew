@@ -183,7 +183,6 @@ def annual_earnings_wrapper(symbol):
     #fig.show()
     return fig
     
-   
 def insider_trade_wrapper(symbol):
     print("Insider Trading wrapper:"+symbol)
     # free acquisitions to be colored. Also outline importance of the seller/buyer in scope of company
@@ -205,7 +204,6 @@ def insider_trade_wrapper(symbol):
     fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide',
                       legend=dict(orientation="h",yanchor="bottom",y=1.02,xanchor="right",x=1))
     return fig
-    
     
 def growth_metric_wrapper(symbol):
     finGrowthQuartURL = ("https://financialmodelingprep.com/api/v3/financial-growth/"+symbol+"?period=quarter&limit=60&apikey=ce687b3fe0554890e65d6a5e48f601f9")

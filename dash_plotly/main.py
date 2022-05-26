@@ -15,7 +15,6 @@ from dash.exceptions import PreventUpdate
 
 import pandas as pd
 import numpy as np
-#from flask import Flask
 
 import sys
 sys.path.append(r'/Users/bratislavpetkovic/Desktop/cashew/dash_plotly/')
@@ -24,15 +23,23 @@ from helper_functions import  get_jsonparsed_data, health_preparer, discount_pre
 from db_helpers import fetch_symbol_metadata, fetch_analyst_rating, fetch_biggest_growers, fetch_best_value, fetch_healthiest_companies
 from ui_styles import *
 from callback_wrapper import *
-from select_options import *
+from select_options import * 
 from components_wrapper import *
 from portfolio_generator import *
+
+# targetURL = "https://financialmodelingprep.com/api/v4/price-target-rss-feed?page=0&apikey=ce687b3fe0554890e65d6a5e48f601f9"
+# targetDF = pd.DataFrame.from_dict(get_jsonparsed_data(targetURL))
+# analystCompanies = targetDF.analystCompany.unique()
+# targetURL2 = "https://financialmodelingprep.com/api/v4/price-target-rss-feed?page=1&apikey=ce687b3fe0554890e65d6a5e48f601f9"
+# targetDF2 = pd.DataFrame.from_dict(get_jsonparsed_data(targetURL2))
+# analystCompanies2 = targetDF2.analystCompany.unique()
+# analystUnion = np.union1d(analystCompanies, analystCompanies2)
 
 
 symbol_metadata_df = fetch_symbol_metadata() # METADATA
 
 analyst_rating_df = fetch_analyst_rating() # ANALYST RATING
-analyst_rating_metadata_df =  analyst_rating_df.merge(symbol_metadata_df)
+analyst_rating_metadata_df =  analyst_rating_df.merge(symbol_metadata_df) 
 del analyst_rating_metadata_df["price"]
 
 biggest_growers_df = fetch_biggest_growers() # BIGGEST GROWERS
@@ -43,7 +50,7 @@ best_value_df = fetch_best_value()          # BEST VALUE
 best_value_metadata_df =  best_value_df.merge(symbol_metadata_df)
 best_value_metadata_df=best_value_metadata_df.sort_values(by=['marketCap'], ascending=False)
 
-healthiest_companies_df = fetch_healthiest_companies()  # HEALTHIEST COMPANIES
+healthiest_companies_df = fetch_healthiest_companies()  # HEALTHIEST COMPANIES 
 healthiest_companies_metadata_df =  healthiest_companies_df.merge(symbol_metadata_df)
 del healthiest_companies_metadata_df["price"]
 
@@ -59,7 +66,7 @@ growersTable = create_table("DT_growers", biggest_growers_metadata_df, biggest_g
 # marketCapChecklist = create_checklist("marketCapChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'inline-block', 'marginLeft':-40,'width':400})
 table1Choice = dbc.RadioItems(options=tableOptions,value=tables[0],id="table1",inline=True)
 table2Choice = dbc.RadioItems(options=tableOptions,value=tables[1],id="table2",inline=True)
-
+        
 #CHECKLISTS
 analystChecklist = create_checklist("analystChecklist", analyst_rating_metadata_df.columns, analyst_rating_chosen, {'display': 'block'})
 healthiestChecklist = create_checklist("healthiestChecklist", healthiest_companies_metadata_df.columns, healthiest_chosen, {'display': 'block'})
@@ -104,13 +111,13 @@ radarCard = dbc.Card(
         ]
     ),
     style={
-
+        
         "border-radius": "2%",
         "background": "secondary",
     },
 )
 
-#LAYOUT SHORTCUTS
+#LAYOUT SHORTCUTS 
 table_filters=dbc.Row([
     # dbc.Col(marketCapSlider, width=3),
     dbc.Col(tableSelect, width=2),
@@ -129,7 +136,7 @@ layout = html.Div([
         ])
 ],id = "layout")
 
-
+portfolioSymbols = []
 
 #PAGE CONTENT SHORTCUTS
 tablesPage = [table_filters,healthiest_content]
@@ -143,7 +150,7 @@ researchPage = [
         dbc.Col(table2Choice, width=6),
         ]),
     dbc.Row([
-            dbc.Col(dcc.Graph(id="scatterPlot",config={'displayModeBar': False}), width=12),
+            dbc.Col(dcc.Graph(id="scatterPlot",config={'displayModeBar': False}), width=12),            
         ])
     ]
 analysisPage = [
@@ -175,7 +182,7 @@ portfolioGenPage = dbc.Container([
         dbc.Col(portfolioSize, width="auto"),
         dbc.Col(portfolioTables, width="auto"),
         dbc.Col(dbc.Button("Generate", color="info", className="me-1", id="genPortfolio",style={"marginTop":12}), width="auto"),
-
+        
         ]),
     dbc.Row([
         dbc.Col(sectors_CL_card, width=2),
@@ -188,18 +195,11 @@ portfolioGenPage = dbc.Container([
 
 
 #-------------------------------------------APP--------------------------------------------------------
-
-
 app = Dash(
-    name = "cashew",
-#    server = server,
     external_stylesheets = [dbc.themes.ZEPHYR], #LUX, #MORPH, #PULSE, #VAPOR, # ZEPHYR, #SLATE, #Spacelab, #Yeti
-    suppress_callback_exceptions=True)
-
-server = app.server
-
+    suppress_callback_exceptions=True) 
 app.layout = dbc.Container(
-[
+[   
     navbar,
     dbc.Tabs(
         [
@@ -208,6 +208,7 @@ app.layout = dbc.Container(
             dbc.Tab(analysisPage,label="PROFILE", tab_id="Analysis"),
             dbc.Tab(candlestickPage,label="PRICE", tab_id="Candlestick"),
             dbc.Tab(portfolioGenPage,label="PORTFOLIO", tab_id="PortfolioGenerator"),
+            dbc.Tab([],label="CALENDAR", tab_id="Calendar"),
         ],id="tabs", active_tab="Tables",
     ),
     # html.Div(id="tab-content", className="p-4", children=tablesPage),
@@ -259,7 +260,7 @@ def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,port
         dict_df['Best Value' ]=best_value_metadata_df
     if('Biggest Growth' in tablesChecklist):
         dict_df['Biggest Growth' ]=biggest_growers_metadata_df
-    # works only for analystRating and Healthiest currently
+    # works only for analystRating and Healthiest currently 
     print("dict size:", len(dict_df))
     print("dict_df[Analyst Rating]", dict_df["Analyst Rating"].head())
     print("dict_df[Healthiest]", dict_df["Healthiest"].head())
@@ -271,9 +272,29 @@ def portfolio_gen(n_clicks,tablesChecklist,sectorChecklist,investmentAmount,port
     print("pie_df head",pie_df.head())
     pieChart = piechart_wrapper(pie_df)
     layoutChild=create_card_layout(portfolioDF,symbolCard)
-
+    print(portfolioDF.columns)
+    portfolioSymbols = list(portfolioDF.Symbol.unique())
+    print("portfolioSymbols: ", portfolioSymbols)
+    print("")
+    print("")
+    print("")
+    for i in range(0,len(layoutChild)):
+        print("-------------------------------------------------------------------------")
+        # print(layoutChild[i])
+        # print(layoutChild[i].Row)
+        # for j in range(0,len(layoutChild[i])):
+        #     print("##############################")
+            # print(layoutChild[i][j])
+    print("")
+    print("")
+    print("")
     return layoutChild,pieChart
 
+# @app.callback()
+# def update_analyst():
+#     Output("")
+    
+    
 @app.callback(
     Output("table1", "options"),
     Input("table2", "value"))
@@ -289,83 +310,83 @@ def scatter_table2_update(table1Choice):
     return table2Options
 
 @app.callback(
-    Output("estimateGrowthChart", "figure"),
+    Output("estimateGrowthChart", "figure"), 
     Input("stockSymbol", "value"))
 def growth_future(stockSymbol):
     return growth_future_wrapper(stockSymbol)
 
 @app.callback(
-    Output("growthChart", "figure"),
+    Output("growthChart", "figure"), 
     Input("stockSymbol", "value"))
 def growth_metric(stockSymbol):
     return growth_metric_wrapper(stockSymbol)
 
 @app.callback(
-    Output("DT_analysts", "data"),
+    Output("DT_analysts", "data"), 
     Input("sectorSelect", "value"))
 def DT_analysts_update(sectorSelect):
     print("updating DT_analysts")
     return analyst_rating_metadata_df[analyst_rating_metadata_df.sector.isin(sectorSelect)].to_dict('records')
 
 @app.callback(
-    Output("DT_healthiest", "data"),
+    Output("DT_healthiest", "data"), 
     Input("sectorSelect", "value"))
 def DT_healthiest_update(sectorSelect):
     print("updating DT_healthiest")
     return healthiest_companies_metadata_df[healthiest_companies_metadata_df.sector.isin(sectorSelect)].to_dict('records')
 
 @app.callback(
-    Output("DT_discount", "data"),
+    Output("DT_discount", "data"), 
     Input("sectorSelect", "value"))
 def DT_discount_update(sectorSelect):
     print("updating DT_discount")
     return best_value_metadata_df[best_value_metadata_df.sector.isin(sectorSelect)].to_dict('records')
 
 @app.callback(
-    Output("DT_growers", "data"),
+    Output("DT_growers", "data"), 
     Input("sectorSelect", "value"))
 def DT_growers_update(sectorSelect):
     print("updating DT_growers")
     return biggest_growers_metadata_df[biggest_growers_metadata_df.sector.isin(sectorSelect)].to_dict('records')
 
 
-@app.callback(
+@app.callback( 
     Output("DT_analysts", "columns"),
     [Input('analystChecklist', 'value')],
     [State('DT_analysts', 'columns')])
 def columns_table1(value, columns):
     if value is None or columns is None:
-        raise PreventUpdate
+        raise PreventUpdate      
     columns = [{"name": i, "id": i, 'hideable': False} for i in value]
     return columns
 
-@app.callback(
+@app.callback( 
     Output("DT_healthiest", "columns"),
     [Input('healthiestChecklist', 'value')],
     [State('DT_healthiest', 'columns')])
 def columns_table2(value, columns):
     if value is None or columns is None:
-        raise PreventUpdate
+        raise PreventUpdate      
     columns = [{"name": i, "id": i, 'hideable': False} for i in value]
     return columns
 
-@app.callback(
+@app.callback( 
     Output("DT_discount", "columns"),
     [Input('discountChecklist', 'value')],
     [State('DT_discount', 'columns')])
 def columns_table3(value, columns):
     if value is None or columns is None:
-        raise PreventUpdate
+        raise PreventUpdate      
     columns = [{"name": i, "id": i, 'hideable': False} for i in value]
     return columns
 
-@app.callback(
+@app.callback( 
     Output("DT_growers", "columns"),
     [Input('growersChecklist', 'value')],
     [State('DT_growers', 'columns')])
 def columns_table4(value, columns):
     if value is None or columns is None:
-        raise PreventUpdate
+        raise PreventUpdate      
     columns = [{"name": i, "id": i, 'hideable': False} for i in value]
     return columns
 
@@ -383,54 +404,54 @@ def scatter_plot(table1, table2):
     if table1 == 'Analyst Rating' :
         df_x = analyst_rating_preparer(analyst_rating_metadata_df)
         df_x["rank_overall_x"] = df_x.rank_overall_ar
-
+        
     elif table1 == 'Best Value' :
         df_x = discount_preparer(best_value_metadata_df)
-        df_x["rank_overall_x"] = df_x.rank_overall_bv
-
+        df_x["rank_overall_x"] = df_x.rank_overall_bv  
+       
     elif table1 == 'Biggest Growth' :
         df_x = growers_preparer(biggest_growers_metadata_df)
         df_x["rank_overall_x"] = df_x.rank_overall_bg
-
+        
     elif table1 == 'Healthiest' :
         df_x = health_preparer(healthiest_companies_metadata_df)
         df_x["rank_overall_x"] = df_x.rank_overall_hc
-
+    
     if table2 == 'Analyst Rating' :
         df_y = analyst_rating_preparer(analyst_rating_metadata_df)
         df_y["rank_overall_y"] = df_y.rank_overall_ar
-
+        
     elif table2 == 'Best Value' :
         df_y = discount_preparer(best_value_metadata_df)
         df_y["rank_overall_y"] = df_y.rank_overall_bv
-
+        
     elif table2 == 'Biggest Growth' :
         df_y = growers_preparer(biggest_growers_metadata_df)
         df_y["rank_overall_y"] = df_y.rank_overall_bg
-
+        
     elif table2 == 'Healthiest' :
         df_y = health_preparer(healthiest_companies_metadata_df)
         df_y["rank_overall_y"] = df_y.rank_overall_hc
-
+        
     return scatter_wrapper(df_y,df_x)
 
 
 @app.callback(
-    Output("candleStick", "figure"),
+    Output("candleStick", "figure"), 
     [Input("stockSymbol", "value"),Input("indicatorChecklist", "value")])
 def display_candlestick(stockSymbol,indicators):
     return candlestick_wrapper(stockSymbol, indicators)
-
+    
 # @app.callback(
-#     Output("test", "figure"),
+#     Output("test", "figure"), 
 #     [Input("stockSymbol", "value"),Input("indicatorChecklist", "value")])
 # def test(stockSymbol,indicators):
 #     return test_wrapper(stockSymbol, indicators)
-
+    
 
 
 @app.callback(
-    Output("radarChart", "figure"),
+    Output("radarChart", "figure"), 
     Input("stockSymbol", "value"),
     Input("peerSymbol", "value"))
 def display_radar(stockSymbol, peerSymbol):
@@ -438,14 +459,14 @@ def display_radar(stockSymbol, peerSymbol):
 
 
 @app.callback(
-    Output("earningsLine", "figure"),
+    Output("earningsLine", "figure"), 
     Input("stockSymbol", "value"))
 def earnings_quarter(stockSymbol):
     return quarter_earnings_wrapper(stockSymbol)
 
 
 @app.callback(
-    Output("earningsBar", "figure"),
+    Output("earningsBar", "figure"), 
     Input("stockSymbol", "value"))
 def earnings_bar(stockSymbol):
     return annual_earnings_wrapper(stockSymbol)
@@ -453,13 +474,13 @@ def earnings_bar(stockSymbol):
 
 
 @app.callback(
-    Output("insideTradingBar", "figure"),
+    Output("insideTradingBar", "figure"), 
     Input("stockSymbol", "value"),
     # Input("transactionCount", "value"),
     # Input("timeFrame", "value"),
     )
 def insider_trading(stockSymbol):
     return insider_trade_wrapper(stockSymbol)
-
-if __name__ == '__main__':
-    server.run_server(debug=True)
+    
+    
+app.run_server(debug=True)
