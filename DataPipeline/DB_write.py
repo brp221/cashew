@@ -19,7 +19,7 @@ metadataDF_sub = metadataDF[['symbol', 'companyName', 'marketCap', 'sector', 'in
        'price', 'lastAnnualDividend','exchangeShortName', 'country', 'isEtf',]]
 
 
-# READ THE TABLES
+# READ THE TABLES FROM LOCAL DIR 
 analystPicksDF = pd.read_excel('/Users/bratislavpetkovic/Desktop/cashew/DataPipeline/TABLES/ANalystRanking.xlsx')
 analystPicksDF=analystPicksDF.round(2)
 
